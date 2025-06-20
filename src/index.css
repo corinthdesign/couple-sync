@@ -5,9 +5,92 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #e1d0de;;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+#welcome {
+  text-align: left;
+  align-items: center;
+  align-content: center;
+  text-align: center;
+  flex-wrap: wrap;
+  min-width: 720px;
+  width: 40vw;
+  height: 30vh;
+  margin: 30vh auto;
+  padding: 20px;
+  border: 1px rgb(216, 216, 216) ;
+  background-color: #fff;
+  border-radius: 15px;
+}
+
+#greeting {
+  
+}
+
+#intake {
+  display: grid;
+  width: 70%;
+  margin: 0 auto;
+  gap: 15px;
+  text-align: left;
+  align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
+}
+
+#intake div {
+  display: flex;
+  align-items: center;
+  
+}
+
+label {
+  margin-right: 1em;
+}
+
+input {
+  flex-grow: 2;
+  border-radius: 1em;
+  padding: 1em .75em;
+  border: .5px #8c8c8c solid;
+}
+
+.button {
+display: block;
+margin: 0 auto;
+padding: 1em 2em;
+border: 0px #8c8c8c solid;
+text-transform: uppercase;
+border-radius: 10px;
+transition: all .6s cubic-bezier(0.3, -0.5, 0.2, 1.8);
+}
+
+.button:hover, .button.secondary:hover {
+  cursor: pointer;
+  border-radius: 20px;
+  box-shadow: 0px 0px 5px #fe8bde;
+  background-color: #ff62d2;
+}
+
+.primary {
+background-color: #ff62d2;
+font-weight: bold;
+color: #fff;
+}
+
+.secondary {
+  background-color: #ffabe7;
+  color: #fff;
+}
+
+#signin {
+display: block;
+margin: 0 0 0 auto;
+gap: 1em;
 }
