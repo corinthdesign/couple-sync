@@ -25,13 +25,18 @@ export default function Onboarding() {
     checkOnboarding();
   }, [user, loading, navigate]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setSubmitting(true);
+  
     const { error } = await supabase
       .from('profiles')
-      .update({ full_name: name, onboarding_complete: true })
-      .eq('id', user.id);
-
+      .upsert({
+        id: user.id,
+        full_name: name,
+        onboarding_complete: true,
+      });
+  
     if (error) {
       alert('Error saving: ' + error.message);
       setSubmitting(false);
@@ -39,6 +44,7 @@ export default function Onboarding() {
       navigate('/');
     }
   };
+  
 
   if (loading) return <p>Loading...</p>;
 
