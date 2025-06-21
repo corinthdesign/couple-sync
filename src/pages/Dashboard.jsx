@@ -1,7 +1,7 @@
 // 5. src/pages/Dashboard.js [updated to fetch partner's metrics too] 
 import { useEffect, useState, useCallback } from 'react'; import { supabase } from '../supabaseClient'; import { useNavigate } from 'react-router-dom'; import { useAuth } from '../contexts/AuthContext';
 
-export default function Dashboard() { const [metrics, setMetrics] = useState([]); const navigate = useNavigate(); const { user, loading } = useAuth();
+export default function Dashboard() { const [metrics, setMetrics] = useState([]); const { user, loading } = useAuth();
 
 const fetchMetrics = useCallback(async () => { if (!user) return;
 
