@@ -29,10 +29,6 @@ code {
   border-radius: 15px;
 }
 
-#greeting {
-  
-}
-
 #intake {
   display: grid;
   width: 70%;
@@ -44,14 +40,16 @@ code {
   flex-wrap: wrap;
 }
 
-#intake div {
+#intake form {
   display: flex;
   align-items: center;
-  
+  gap: 1em;
+  margin: 0;
 }
 
 label {
   margin-right: 1em;
+  text-align: right;
 }
 
 input {
@@ -85,7 +83,7 @@ color: #fff;
 }
 
 .secondary {
-  background-color: #ffabe7;
+  background-color: #ff74d8;
   color: #fff;
 }
 
@@ -93,4 +91,10 @@ color: #fff;
 display: block;
 margin: 0 0 0 auto;
 gap: 1em;
+}
+
+.mt-4 {
+  text-align: right;
+  color: #ffabe7;
+  margin: 0;
 }

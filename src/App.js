@@ -2,21 +2,22 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
-import Link from "./pages/Link";
+import LinkPartner from "./pages/LinkPartner";
 import Settings from "./pages/Settings";
+import Onboarding from './pages/Onboarding';
 import RequireAuth from './components/RequireAuth';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/Dashboard" element={
+        <Route path="/" element={
           <RequireAuth>
             <Dashboard />
           </RequireAuth>
         } 
         />
-        <Route path="/Login" element={
+        <Route path="/login" element={
           <Login />
           } 
         />
@@ -28,10 +29,17 @@ function App() {
         />
         <Route path="/link" element={
           <RequireAuth>
-            <Link />
+            <LinkPartner />
           </RequireAuth>
         }
         />
+
+        <Route path="/onboarding" element={
+         <RequireAuth>
+            <Onboarding />
+        </RequireAuth>
+  }
+/>
       </Routes>
     </BrowserRouter>
   );

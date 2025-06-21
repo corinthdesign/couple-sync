@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Link() {
+function LinkPartner() {
   return (
     <div>
       <h1>Welcome Home</h1>
@@ -9,5 +9,5 @@ function Link() {
   );
 }
 
-export default Link;
+export default LinkPartner;
 
