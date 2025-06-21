@@ -11,7 +11,9 @@ export default function RequireAuth({ children }) {
 
   useEffect(() => {
     const checkProfile = async () => {
-        if (!user || loading) return;
+        if (!loading && !user) {
+            navigate('/login');
+          }
       
         try {
           const { data: profile, error } = await supabase
