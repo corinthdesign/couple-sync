@@ -1,34 +1,21 @@
-import { useState, useEffect } from 'react';
+// Onboarding.js
+import { useState } from 'react';
+import { supabase } from '../supabaseClient.js';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Onboarding() {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    const checkOnboarding = async () => {
-      if (loading || !user) return;
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('onboarding_complete')
-        .eq('id', user.id)
-        .single();
-
-      if (profile?.onboarding_complete) {
-        navigate('/');
-      }
-    };
-    checkOnboarding();
-  }, [user, loading, navigate]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-  
+
+    console.log('Submitting profile:', name);
+
     const { error } = await supabase
       .from('profiles')
       .upsert({
@@ -36,34 +23,39 @@ export default function Onboarding() {
         full_name: name,
         onboarding_complete: true,
       });
-  
+
     if (error) {
       alert('Error saving: ' + error.message);
       setSubmitting(false);
     } else {
-      navigate('/');
+      console.log('Profile saved! Redirecting...');
+      setTimeout(() => {
+        navigate('/');
+      }, 500);
     }
   };
-  
-
-  if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl mb-4">Welcome! Let’s get started.</h1>
-      <input
-        className="border p-2 w-full mb-4"
-        placeholder="Your name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <button
-        onClick={handleSubmit}
-        disabled={submitting}
-        className="bg-blue-600 text-white px-4 py-2 rounded"
-      >
-        {submitting ? 'Saving...' : 'Continue'}
-      </button>
+    <div className="p-4 max-w-md mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Welcome!</h1>
+      <p className="mb-2">Let’s get your profile set up.</p>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Your name"
+          className="w-full border p-2 rounded"
+          required
+        />
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded w-full"
+          disabled={submitting}
+        >
+          {submitting ? 'Saving...' : 'Continue'}
+        </button>
+      </form>
     </div>
   );
 }

@@ -21,6 +21,8 @@ export default function RequireAuth({ children }) {
             .select('onboarding_complete')
             .eq('id', user.id)
             .single();
+
+            console.log(profile)
       
           if (error && error.code !== 'PGRST116') { // 'PGRST116' = no rows found error
             console.error(error);
