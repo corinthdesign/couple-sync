@@ -32,15 +32,6 @@ export default function Onboarding() {
       return;
     }
 
-    // Upload profile photo if provided
-    let photoUrl = null;
-    if (photoFile) {
-      const {error: uploadError } = await supabase.storage
-        .from('profile-photos')
-        .upload(`avatars/${user.id}`, photoFile, {
-          cacheControl: '3600',
-          upsert: true,
-        });
 
     console.log('Upload path:', `avatars/${user.id}`);
 
