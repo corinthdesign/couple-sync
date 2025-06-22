@@ -32,6 +32,15 @@ export default function Onboarding() {
       return;
     }
 
+    // Upload profile photo if provided
+    let photoUrl = null;
+    if (photoFile) {
+      const {error: uploadError } = await supabase.storage
+        .from('profile-photos')
+        .upload(`avatars/${user.id}`, photoFile, {
+          cacheControl: '3600',
+          upsert: true,
+        });
 
     console.log('Upload path:', `avatars/${user.id}`);
 
@@ -136,7 +145,12 @@ export default function Onboarding() {
         </div>
         <div>
           <label className="block font-medium">Upload a profile photo</label>
-
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setPhotoFile(e.target.files[0])}
+            className="w-full"
+          />
         </div>
         <button
           type="submit"
