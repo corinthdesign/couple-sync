@@ -145,12 +145,7 @@ export default function Onboarding() {
         </div>
         <div>
           <label className="block font-medium">Upload a profile photo</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setPhotoFile(e.target.files[0])}
-            className="w-full"
-          />
+
         </div>
         <button
           type="submit"
