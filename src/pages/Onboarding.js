@@ -1,6 +1,6 @@
 // Onboarding.js
 import { useState } from 'react';
-import { supabase } from '../supabaseClient.js';
+import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -35,12 +35,15 @@ export default function Onboarding() {
     // Upload profile photo if provided
     let photoUrl = null;
     if (photoFile) {
-      const {error: uploadError } = await supabase.storage
-            .from('profile-photos')
-            .upload(`avatars/${user.id}`, file, { upsert: true });
-        });
+      const uploadPath = `avatars/${user.id}`;
+      console.log('Upload path:', uploadPath);
 
-    console.log('Upload path:', `avatars/${user.id}`);
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('profile-photos')
+        .upload(uploadPath, photoFile, {
+          cacheControl: '3600',
+          upsert: true,
+        });
 
       if (uploadError) {
         alert('Error uploading photo: ' + uploadError.message);
@@ -49,8 +52,8 @@ export default function Onboarding() {
       }
 
       const { data: publicUrlData } = supabase.storage
-        .from('profile_photos')
-        .getPublicUrl(`avatars/${user.id}`);
+        .from('profile-photos')
+        .getPublicUrl(uploadPath);
       photoUrl = publicUrlData.publicUrl;
     }
 
