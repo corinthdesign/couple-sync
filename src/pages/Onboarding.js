@@ -36,7 +36,7 @@ export default function Onboarding() {
     let photoUrl = null;
     if (photoFile) {
       const {error: uploadError } = await supabase.storage
-        .from('profile_photos')
+        .from('profile-photos')
         .upload(`avatars/${user.id}`, photoFile, {
           cacheControl: '3600',
           upsert: true,
