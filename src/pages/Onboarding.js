@@ -38,7 +38,7 @@ export default function Onboarding() {
       const uploadPath = `avatars/${user.id}`;
       console.log('Upload path:', uploadPath);
 
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('profile-photos')
         .upload(uploadPath, photoFile, {
           cacheControl: '3600',
