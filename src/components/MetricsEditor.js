@@ -1,9 +1,8 @@
-// Dashboard.jsx
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
 
-export default function Dashboard() {
+export default function MetricsEditor() {
   const { user } = useAuth();
   const [metrics, setMetrics] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -15,52 +14,53 @@ export default function Dashboard() {
         .from('metrics')
         .select('*')
         .eq('user_id', user.id);
-
       if (error) {
         console.error('Error fetching metrics:', error);
       } else {
+        // Add a local 'value' field to track slider position
         const withValues = data.map((m) => ({
           ...m,
-          value: m.value ?? 5,
+          value: m.value ?? 5, // default 5 if no value yet
         }));
         setMetrics(withValues);
       }
     }
-
     fetchMetrics();
   }, [user.id]);
 
+  // Handle slider change
   const handleSliderChange = (id, newValue) => {
     setMetrics((prev) =>
       prev.map((m) => (m.id === id ? { ...m, value: newValue } : m))
     );
   };
 
+  // Save updated metrics values to Supabase
   const saveMetrics = async () => {
     setSaving(true);
-    for (let metric of metrics) {
-      const { error } = await supabase
-        .from('metrics')
-        .update({ value: metric.value })
-        .eq('id', metric.id)
-        .eq('user_id', user.id);
+    const updates = metrics.map(({ id, value }) => ({
+      id,
+      value,
+    }));
 
-      if (error) {
-        alert(`Error updating metric "${metric.name}": ${error.message}`);
-        setSaving(false);
-        return;
-      }
+    const { error } = await supabase.from('metrics').upsert(updates, {
+      onConflict: ['id'],
+    });
+
+    if (error) {
+      alert('Error saving metrics: ' + error.message);
+    } else {
+      alert('Metrics updated!');
     }
-    alert('Metrics updated!');
     setSaving(false);
   };
 
   return (
     <div className="p-4 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Your Dashboard</h1>
+      <h2 className="text-xl font-bold mb-4">Update Your Metrics</h2>
       {metrics.map((metric) => (
         <div key={metric.id} className="mb-6">
-          <label className="block mb-1 font-medium">{metric.name}</label>
+          <label className="block mb-1">{metric.name}</label>
           <input
             type="range"
             min={0}
@@ -69,15 +69,15 @@ export default function Dashboard() {
             onChange={(e) => handleSliderChange(metric.id, Number(e.target.value))}
             className="w-full"
           />
-          <div className="text-sm text-gray-700">Value: {metric.value}</div>
+          <div>{metric.value}</div>
         </div>
       ))}
       <button
         onClick={saveMetrics}
         disabled={saving}
-        className="bg-blue-600 text-white px-4 py-2 rounded w-full"
+        className="bg-green-600 text-white px-4 py-2 rounded"
       >
-        {saving ? 'Saving...' : 'Save Changes'}
+        {saving ? 'Saving...' : 'Save'}
       </button>
     </div>
   );
