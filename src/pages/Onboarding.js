@@ -42,6 +42,8 @@ export default function Onboarding() {
           upsert: true,
         });
 
+    console.log('Upload path:', `avatars/${user.id}`);
+
       if (uploadError) {
         alert('Error uploading photo: ' + uploadError.message);
         setSubmitting(false);
