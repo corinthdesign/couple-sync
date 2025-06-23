@@ -1,14 +1,14 @@
-// Dashboard.jsx
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
   const { user } = useAuth();
   const [metrics, setMetrics] = useState([]);
   const [saving, setSaving] = useState(false);
+  const navigate = useNavigate();
 
-  // Fetch user's metrics on mount
   useEffect(() => {
     async function fetchMetrics() {
       let { data, error } = await supabase
@@ -55,6 +55,15 @@ export default function Dashboard() {
     setSaving(false);
   };
 
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      alert('Logout failed: ' + error.message);
+    } else {
+      navigate('/login');
+    }
+  };
+
   return (
     <div className="p-4 max-w-md mx-auto">
       <h1 className="text-2xl font-bold mb-4">Your Dashboard</h1>
@@ -78,6 +87,13 @@ export default function Dashboard() {
         className="bg-blue-600 text-white px-4 py-2 rounded w-full"
       >
         {saving ? 'Saving...' : 'Save Changes'}
+      </button>
+
+      <button
+        onClick={handleLogout}
+        className="mt-6 bg-red-600 text-white px-4 py-2 rounded w-full"
+      >
+        Log Out
       </button>
     </div>
   );
