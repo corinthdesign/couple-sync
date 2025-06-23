@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import timezones from '../utils/timezones'; // Assumes you have a timezone list
 
 const loveLanguageOptions = [
   'Words of Affirmation',
@@ -160,13 +161,16 @@ export default function Profile() {
 
         <div>
           <label className="block mb-1">Time Zone</label>
-          <input
-            type="text"
+          <select
+            className="w-full border p-2 rounded"
             value={timezone}
             onChange={(e) => setTimezone(e.target.value)}
-            placeholder="e.g. America/New_York"
-            className="w-full border p-2 rounded"
-          />
+          >
+            <option value="">Select your time zone</option>
+            {timezones.map((tz) => (
+              <option key={tz} value={tz}>{tz}</option>
+            ))}
+          </select>
         </div>
 
         <div>
