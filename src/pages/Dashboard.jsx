@@ -6,6 +6,9 @@ export default function Dashboard() {
   const { user } = useAuth();
   const [metrics, setMetrics] = useState([]);
   const [saving, setSaving] = useState(false);
+  const [setModalOpen] = useState(false);
+  const [setEditModalOpen] = useState(false);
+  const [setMetricToEdit] = useState(null);
 
   useEffect(() => {
     async function fetchMetrics() {
