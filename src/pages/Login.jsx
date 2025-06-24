@@ -61,7 +61,7 @@ function Login() {
               className="border p-2 mr-2"
               required
             />
-            <button type="submit" class="button secondary">
+            <button type="submit" className="button secondary">
               Send Magic Link
             </button>
       </form>

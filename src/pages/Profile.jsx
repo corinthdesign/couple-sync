@@ -55,20 +55,41 @@ export default function Profile() {
     loadProfile();
   }, [user.id, user.email]);
 
+  console.log(user.id);
+
   const handleAvatarUpload = async () => {
-    if (!avatarFile) return null;
+    if (!avatarFile || !user) return null;
+  
+    // Get current session and access token
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    const accessToken = sessionData?.session?.access_token;
+  
+    if (!accessToken) {
+      console.error('No access token available for upload.');
+      return null;
+    }
+  
+    const path = `public/${user.id}/avatar.png`;
+  
     const { data, error } = await supabase.storage
       .from('avatars')
-      .upload(`public/${user.id}/avatar.png`, avatarFile, {
+      .upload(path, avatarFile, {
         cacheControl: '3600',
-        upsert: true
+        upsert: true,
+        // Inject the access token manually
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
+  
     if (error) {
       console.error('Photo upload failed:', error.message);
       return null;
     }
+  
     return data.path;
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();

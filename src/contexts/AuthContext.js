@@ -9,6 +9,12 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const logout = async () => {
+    await supabase.auth.signOut();
+    setUser(null); // Clear user from context
+  };
+
+
   useEffect(() => {
     console.log('Checking Supabase session...');
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -28,10 +34,11 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ session, user, loading }}>
+    <AuthContext.Provider value={{ session, user, loading, logout }}>
       {children}
     </AuthContext.Provider>
   );
+
 }
 
 export function useAuth() {
