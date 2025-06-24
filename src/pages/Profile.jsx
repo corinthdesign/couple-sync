@@ -124,6 +124,7 @@ export default function Profile() {
   if (loading) return <div className="p-4">Loading profile...</div>;
 
   return (
+    <div className="page-content">
     <div className="p-4 max-w-md mx-auto">
       <h1 className="text-2xl font-bold mb-4">Edit Profile</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -225,6 +226,7 @@ export default function Profile() {
           {saving ? 'Saving...' : 'Save Profile'}
         </button>
       </form>
+    </div>
     </div>
   );
 }

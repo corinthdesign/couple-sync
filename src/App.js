@@ -8,11 +8,12 @@ import Settings from "./pages/Settings";
 import Onboarding from './pages/Onboarding';
 import RequireAuth from './components/RequireAuth';
 import BottomNav from './components/BottomNav';
+import './App.css';
+
 
 function App() {
   return (
     <BrowserRouter>
-      <div className="pb-20"> {/* Prevent content from being hidden behind bottom nav */}
       <Routes>
         <Route path="/" element={
           <RequireAuth>
@@ -52,7 +53,6 @@ function App() {
   }
 />
       </Routes>
-      </div>
       <BottomNav />
     </BrowserRouter>
   );
