@@ -61,7 +61,7 @@ export default function Profile() {
     if (!avatarFile || !user) return null;
   
     // Get current session and access token
-    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    const { data: sessionData } = await supabase.auth.getSession();
     const accessToken = sessionData?.session?.access_token;
   
     if (!accessToken) {
