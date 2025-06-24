@@ -1,100 +1,124 @@
-body {
+/* Reset & base */
+* {
+  box-sizing: border-box;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #e1d0de;;
+  padding: 0;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
-#welcome {
-  text-align: left;
-  align-items: center;
-  align-content: center;
-  text-align: center;
-  flex-wrap: wrap;
-  min-width: 720px;
-  width: 40vw;
-  height: 30vh;
-  margin: 30vh auto;
-  padding: 20px;
-  border: 1px rgb(216, 216, 216) ;
-  background-color: #fff;
-  border-radius: 15px;
-}
-
-#intake {
-  display: grid;
-  width: 70%;
-  margin: 0 auto;
-  gap: 15px;
-  text-align: left;
-  align-items: center;
-  align-content: center;
-  flex-wrap: wrap;
-}
-
-#intake form {
+body, html, #root {
+  height: 100%;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background: linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%);
+  color: #333;
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 1em;
-  margin: 0;
+  padding: 1rem;
+  min-height: 100vh;
 }
 
-label {
-  margin-right: 1em;
-  text-align: right;
-}
-
-input {
-  flex-grow: 2;
-  border-radius: 1em;
-  padding: 1em .75em;
-  border: .5px #8c8c8c solid;
-}
-
-.button {
-display: block;
-margin: 0 auto;
-padding: 1em 2em;
-border: 0px #8c8c8c solid;
-text-transform: uppercase;
-border-radius: 10px;
-transition: all .6s cubic-bezier(0.3, -0.5, 0.2, 1.8);
-}
-
-.button:hover, .button.secondary:hover {
+button {
   cursor: pointer;
+  border: none;
+  border-radius: 30px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+button:focus, input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px #ff62d2aa;
+}
+
+/* Container for pages */
+.page-container {
+  background: white;
   border-radius: 20px;
-  box-shadow: 0px 0px 5px #fe8bde;
-  background-color: #ff62d2;
+  max-width: 420px;
+  width: 100%;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(255, 98, 210, 0.3);
+  text-align: center;
 }
 
-.primary {
-background-color: #ff62d2;
-font-weight: bold;
-color: #fff;
+/* Greeting area */
+#greeting h1:first-child {
+  font-size: 3rem;
+  margin-bottom: 0.25rem;
+  user-select: none;
 }
 
-.secondary {
-  background-color: #ff74d8;
-  color: #fff;
+#greeting h1:nth-child(2) {
+  font-size: 2rem;
+  color: #ff62d2;
+  margin-bottom: 0.5rem;
 }
 
-#signin {
-display: block;
-margin: 0 0 0 auto;
-gap: 1em;
+#greeting h3 {
+  font-weight: 400;
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 2rem;
 }
 
+/* Form */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+input[type="email"] {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border-radius: 30px;
+  border: 2px solid #ddd;
+  transition: border-color 0.3s ease;
+  width: 100%;
+}
+
+input[type="email"]:focus {
+  border-color: #ff62d2;
+}
+
+button.button {
+  background: #ff62d2;
+  color: white;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  border-radius: 30px;
+}
+
+button.button.secondary {
+  background: #ff62d2;
+}
+
+button.button.secondary:hover {
+  background: #e055b6;
+}
+
+/* Message text */
 .mt-4 {
-  text-align: right;
-  color: #ffabe7;
-  margin: 0;
+  margin-top: 1rem;
+  color: #333;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+/* Responsive tweaks */
+@media (max-width: 480px) {
+  .page-container {
+    padding: 1.5rem 1rem;
+  }
+
+  #greeting h1:first-child {
+    font-size: 2.5rem;
+  }
+  #greeting h1:nth-child(2) {
+    font-size: 1.5rem;
+  }
+  #greeting h3 {
+    font-size: 0.9rem;
+  }
 }
