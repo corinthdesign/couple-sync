@@ -1,5 +1,5 @@
 // src/utils/timezones.js
-export default [
+const timezones = [
     "UTC",
     "America/New_York",
     "America/Chicago",
@@ -11,4 +11,6 @@ export default [
     "Asia/Shanghai",
     "Australia/Sydney"
   ];
+  
+  export default timezones;
   
