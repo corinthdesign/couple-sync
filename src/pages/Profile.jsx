@@ -232,7 +232,7 @@ export default function Profile() {
         </button>
 
         <button onClick={handleLogout} className="logout-button">
-        <div><img height="15px" src="/icons/right-from-bracket-solid.svg" /></div>
+        <div><img alt="" height="15px" src="/icons/right-from-bracket-solid.svg" /></div>
         <span>Logout</span>
       </button>
       </form>
