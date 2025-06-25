@@ -25,11 +25,6 @@ button {
   transition: background-color 0.3s ease;
 }
 
-button:focus, input:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px #ff62d2aa;
-}
-
 /* Container for pages */
 .page-container {
   background: white;

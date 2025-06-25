@@ -112,7 +112,7 @@ button:disabled {
 
 .modal-form input:focus,
 .modal-form select:focus {
-  border-color: #ff62d2;
+  border-color: blue;
   outline: none;
 }
 
@@ -336,6 +336,7 @@ input[type="range"] {
   background: transparent;
   cursor: pointer;
   width: 100%; /* Or your desired width */
+  transition: all 0.4s ease;
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none; /* Override default look */
@@ -348,6 +349,7 @@ input[type="range"]::-webkit-slider-thumb {
   border-radius: 100%;
   cursor: pointer;
   z-index: 0;
+  box-shadow: 0 0 5px #ff62d200;
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
@@ -356,8 +358,9 @@ input[type="range"]::-webkit-slider-runnable-track {
   height: 15px;
 }
 
-
-
+input:focus[type="range"]::-webkit-slider-thumb {
+  box-shadow: 0 0 5px #ff62d2;
+}
 
 .logout-button {
   background: #f98080;
