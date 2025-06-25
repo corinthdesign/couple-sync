@@ -28,12 +28,6 @@
   margin-bottom: 0.3rem;
 }
 
-.metric-name {
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: #333;
-}
-
 .metric-edit-btn {
   background: none;
   border: none;
@@ -234,8 +228,13 @@ button:disabled {
 
 .metric-name {
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.75rem;
   color: #333;
+}
+
+.metric-subblock {
+  display: flex;
+  gap: 2em;
 }
 
 .edit-btn {
@@ -258,7 +257,7 @@ input[type="range"] {
 
 .metric-value {
   text-align: right;
-  font-size: 0.85rem;
+  font-size: 2rem;
   margin-top: 0.25rem;
   color: #666;
 }
@@ -459,4 +458,52 @@ input:focus[type="range"]::-webkit-slider-thumb {
 
 .average-score {
   margin: 2em;
+}
+
+.metric-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+/* Each metric block gets max 2 per row */
+.metric-grid .metric-block {
+  flex: 1 1 calc(50% - 0.5rem); /* 2 per row with spacing */
+  box-sizing: border-box;
+}
+
+/* On small screens, stack them vertically */
+@media (max-width: 500px) {
+  .metric-grid .metric-block {
+    flex: 1 1 100%;
+  }
+}
+
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  gap: 8px;
+  max-height: 6em;
+  overflow:scroll;
+  margin: 1rem 0;
+}
+
+.icon-button {
+  background: #f2f2f2;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 0.5rem;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: border 0.2s, background 0.2s;
+}
+
+.icon-button:hover {
+  background: #eee;
+}
+
+.icon-button.selected {
+  border-color: #ff62d2;
+  background: #fff0f8;
 }
