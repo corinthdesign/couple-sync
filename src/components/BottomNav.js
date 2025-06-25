@@ -11,15 +11,15 @@ export default function BottomNav() {
         <span>Sync Dashboard</span>
       </NavLink>
       <NavLink to="/" className="nav-item">
-        <div>♾️</div>
+        <div><img alt="" height="15px" src="/icons/sliders-solid.svg" /></div>
         <span>My Metrics</span>
       </NavLink>
       <NavLink to="/link" className="nav-item">
-        <div>❤️</div>
+        <div><img alt="" height="15px" src="/icons/heart-regular.svg" /></div>
         <span>My Partner</span>
       </NavLink>
       <NavLink to="/profile" className="nav-item">
-        <div>👤</div>
+        <div><img alt="" height="15px" src="/icons/user-solid.svg" /></div>
         <span>Profile</span>
       </NavLink>
     </nav>
