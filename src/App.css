@@ -213,6 +213,7 @@ button:disabled {
   background: #FFDEE9;
   color: #ff62d2;
   margin-bottom: 1.5rem;
+  z-index: 1;
 }
 
 /* Each Metric */
@@ -346,6 +347,7 @@ input[type="range"]::-webkit-slider-thumb {
   top:-.4em;
   border-radius: 100%;
   cursor: pointer;
+  z-index: 0;
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
