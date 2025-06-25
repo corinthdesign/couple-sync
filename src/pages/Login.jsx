@@ -41,7 +41,7 @@ function Login() {
   return (
     <div className="page-container" id="welcome">
       <div id="greeting">
-        <img alt="" height="50px" src="/public/logo512.png" />
+        <img alt="" height="50px" src="/logo512.png" />
         <h1>Welcome to Couple Sync</h1>
         <h3>An app created to keep your marriage in sync ♾️</h3>
       </div>
