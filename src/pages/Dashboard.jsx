@@ -5,14 +5,6 @@ import MetricAverage from '../components/MetricAverage';
 import * as Icons from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const iconOptions = Object.entries(Icons)
-  .filter(([key, val]) => key.startsWith('fa') && val.iconName)
-  .map(([key, val]) => ({
-    name: key,         // e.g. 'faHeart'
-    label: val.iconName, // e.g. 'heart'
-    icon: val,
-  }));
-
 export default function Dashboard() {
   const { user } = useAuth();
   const [metrics, setMetrics] = useState([]);
