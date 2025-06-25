@@ -323,22 +323,31 @@ input[type="range"] {
 }
 
 .logout-button {
-  background: none;
-  border: none;
+  background: #f98080;
+  border: 2px solid #f98080;
   font: inherit;
-  padding: 0;
-  margin: 0;
+  padding: .5em 2em;
+  margin: 10px 0 10px auto;
   cursor: pointer;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  color: #666;
-  transition: color 0.2s;
+  color: #fff;
+  transition: all 0.2s;
 }
 
 .logout-button:hover {
-  color: #2563eb;
+  color: #fff;
+  background: #ff6161;
 }
+
+.logout-button img {
+  padding-right: 10px;
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
 
 .page-content {
   padding-bottom: 80px;
@@ -400,4 +409,18 @@ input[type="range"] {
   background: white;
   color: #333;
   border: 1px solid #ccc;
+}
+
+.syncNum {
+  text-align: center;
+  font-weight: 800;
+  font-size: 4rem;
+}
+
+.average-score {
+  margin: 2em;
+}
+
+.titleh1 {
+  transform: scale(200%);
 }

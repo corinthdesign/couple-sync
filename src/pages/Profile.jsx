@@ -122,12 +122,17 @@ export default function Profile() {
   };
 
   if (loading) return <div className="p-4">Loading profile...</div>;
+  
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/login');
+  };
 
   return (
     <div className="page-content">
     <div className="p-4 max-w-md mx-auto">
       <h1 className="text-2xl font-bold mb-4">Edit Profile</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="modal space-y-4">
         <input
           type="text"
           value={fullName}
@@ -220,11 +225,16 @@ export default function Profile() {
 
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded w-full"
+          className="add-btn bg-blue-600 text-white px-4 py-2 rounded w-full"
           disabled={saving}
         >
           {saving ? 'Saving...' : 'Save Profile'}
         </button>
+
+        <button onClick={handleLogout} className="logout-button">
+        <div><img height="15px" src="/icons/right-from-bracket-solid.svg" /></div>
+        <span>Logout</span>
+      </button>
       </form>
     </div>
     </div>

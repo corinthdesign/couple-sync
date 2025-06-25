@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
+import MetricAverage from '../components/MetricAverage';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -239,7 +240,9 @@ export default function Dashboard() {
   return (
     <div className="page-content">
       <div className="dashboard">
-        <h1>Your Dashboard</h1>
+        <h1 className="titleh1">My Metrics</h1>
+
+        <MetricAverage metrics={metrics} />
 
         {metrics.map((metric) => (
           <div key={metric.id} className="metric-block">
