@@ -7,7 +7,7 @@ export default function BottomNav() {
   return (
     <nav className="bottom-nav">
       <NavLink to="/" className="nav-item">
-        <div>♾️</div>
+        <div><img alt="" height="10px" src="/logo512.png" /></div>
         <span>Sync Dashboard</span>
       </NavLink>
       <NavLink to="/" className="nav-item">
