@@ -16,6 +16,7 @@ export default function Dashboard() {
         .from('metrics')
         .select('*')
         .eq('user_id', user.id);
+
       if (error) {
         console.error('Error fetching metrics:', error);
         setMetrics([]);
@@ -87,6 +88,48 @@ export default function Dashboard() {
     setEditModalOpen(true);
   };
 
+  const handleEditSave = async (updatedMetric) => {
+    const { error } = await supabase
+      .from('metrics')
+      .update({
+        name: updatedMetric.name,
+        scale_type: updatedMetric.scale_type,
+      })
+      .eq('id', updatedMetric.id)
+      .eq('user_id', user.id);
+
+    if (error) {
+      alert(`Error updating metric: ${error.message}`);
+      return;
+    }
+
+    setMetrics((prev) =>
+      prev.map((m) =>
+        m.id === updatedMetric.id ? { ...m, ...updatedMetric } : m
+      )
+    );
+    setEditModalOpen(false);
+  };
+
+  const handleDeleteMetric = async (id) => {
+    const confirm = window.confirm('Are you sure you want to delete this metric?');
+    if (!confirm) return;
+
+    const { error } = await supabase
+      .from('metrics')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', user.id);
+
+    if (error) {
+      alert(`Error deleting metric: ${error.message}`);
+      return;
+    }
+
+    setMetrics((prev) => prev.filter((m) => m.id !== id));
+    setEditModalOpen(false);
+  };
+
   function AddMetricModal({ isOpen, onClose, onSave }) {
     const [name, setName] = useState('');
     const [scaleType, setScaleType] = useState('number');
@@ -109,18 +152,10 @@ export default function Dashboard() {
           <h2>Add New Metric</h2>
 
           <label>Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
 
           <label>Scale</label>
-          <select
-            value={scaleType}
-            onChange={(e) => setScaleType(e.target.value)}
-          >
+          <select value={scaleType} onChange={(e) => setScaleType(e.target.value)}>
             <option value="number">0–10</option>
             <option value="percentage">Percentage</option>
           </select>
@@ -130,15 +165,71 @@ export default function Dashboard() {
             type="text"
             value={icon}
             onChange={(e) => setIcon(e.target.value)}
-            placeholder="Emoji or icon name"
             disabled
+            placeholder="e.g., 💖"
           />
 
           <div className="modal-buttons">
-            <button type="button" onClick={onClose} className="btn secondary">
-              Cancel
-            </button>
+            <button type="button" onClick={onClose} className="btn secondary">Cancel</button>
             <button type="submit" className="btn primary">Add</button>
+          </div>
+        </form>
+      </div>
+    );
+  }
+
+  function EditMetricModal({ isOpen, onClose, onSave, onDelete, metric }) {
+    const [name, setName] = useState(metric?.name || '');
+    const [scaleType, setScaleType] = useState(metric?.scale_type || 'number');
+
+    useEffect(() => {
+      setName(metric?.name || '');
+      setScaleType(metric?.scale_type || 'number');
+    }, [metric]);
+
+    if (!isOpen || !metric) return null;
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      onSave({ id: metric.id, name: name.trim(), scale_type: scaleType });
+    };
+
+    const isProtected = ['Words of Affirmation', 'Acts of Service', 'Receiving Gifts', 'Quality Time', 'Physical Touch'].includes(metric.name);
+
+    return (
+      <div className="modal-overlay">
+        <form className="modal" onSubmit={handleSubmit}>
+          <h2>Edit Metric</h2>
+
+          <label>Name</label>
+          <input
+            type="text"
+            value={name}
+            disabled={isProtected}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+
+          <label>Scale</label>
+          <select
+            value={scaleType}
+            disabled={isProtected}
+            onChange={(e) => setScaleType(e.target.value)}
+          >
+            <option value="number">0–10</option>
+            <option value="percentage">Percentage</option>
+          </select>
+
+          <div className="modal-buttons space-between">
+            {!isProtected && (
+              <button type="button" onClick={() => onDelete(metric.id)} className="btn danger">
+                Delete
+              </button>
+            )}
+            <div className="modal-buttons">
+              <button type="button" onClick={onClose} className="btn secondary">Cancel</button>
+              <button type="submit" className="btn primary">Save</button>
+            </div>
           </div>
         </form>
       </div>
@@ -179,6 +270,14 @@ export default function Dashboard() {
           isOpen={modalOpen}
           onClose={() => setModalOpen(false)}
           onSave={handleAddMetric}
+        />
+
+        <EditMetricModal
+          isOpen={editModalOpen}
+          onClose={() => setEditModalOpen(false)}
+          onSave={handleEditSave}
+          onDelete={handleDeleteMetric}
+          metric={metricToEdit}
         />
       </div>
     </div>
