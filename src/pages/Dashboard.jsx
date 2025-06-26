@@ -41,6 +41,14 @@ export default function Dashboard() {
     );
   };
 
+  const iconOptions = Object.entries(Icons)
+  .filter(([key, val]) => key.startsWith('fa') && val.iconName)
+  .map(([key, val]) => ({
+    name: key,         // e.g. 'faHeart'
+    label: val.iconName, // e.g. 'heart'
+    icon: val,
+  }));
+
   const saveMetrics = async () => {
     setSaving(true);
     for (let metric of metrics) {
