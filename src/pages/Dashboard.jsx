@@ -8,8 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 const iconOptions = Object.entries(Icons)
   .filter(([key, val]) => key.startsWith('fa') && val.iconName)
   .map(([key, val]) => ({
-    name: key,         // e.g. 'faHeart'
-    label: val.iconName, // e.g. 'heart'
+    name: key,
+    label: val.iconName,
     icon: val,
   }));
 
@@ -105,6 +105,7 @@ export default function Dashboard() {
       .update({
         name: updatedMetric.name,
         scale_type: updatedMetric.scale_type,
+        icon: updatedMetric.icon,
       })
       .eq('id', updatedMetric.id)
       .eq('user_id', user.id);
@@ -145,6 +146,12 @@ export default function Dashboard() {
     const [name, setName] = useState('');
     const [scaleType, setScaleType] = useState('number');
     const [icon, setIcon] = useState('');
+    const [iconSearch, setIconSearch] = useState('');
+
+    const filteredIcons = iconOptions.filter(({ name, label }) =>
+      name.toLowerCase().includes(iconSearch.toLowerCase()) ||
+      label.toLowerCase().includes(iconSearch.toLowerCase())
+    );
 
     if (!isOpen) return null;
 
@@ -171,20 +178,27 @@ export default function Dashboard() {
             <option value="percentage">Percentage</option>
           </select>
 
-          <label>Icon</label>
-<div className="icon-grid">
-  {iconOptions.map(({ name, icon: faIcon }) => (
-    <button
-      key={name}
-      type="button"
-      className={`icon-button ${icon === name ? 'selected' : ''}`}
-      onClick={() => setIcon(name)}
-      title={faIcon.iconName}
-    >
-      <FontAwesomeIcon icon={faIcon} />
-    </button>
-  ))}
-</div>
+          <label>Select Icon</label>
+          <input
+            type="text"
+            placeholder="Search icons..."
+            value={iconSearch}
+            onChange={(e) => setIconSearch(e.target.value)}
+            className="icon-search-input"
+          />
+          <div className="icon-grid">
+            {filteredIcons.map(({ name, icon: faIcon }) => (
+              <button
+                key={name}
+                type="button"
+                className={`icon-button ${icon === name ? 'selected' : ''}`}
+                onClick={() => setIcon(name)}
+                title={faIcon.iconName}
+              >
+                <FontAwesomeIcon icon={faIcon} />
+              </button>
+            ))}
+          </div>
 
           <div className="modal-buttons">
             <button type="button" onClick={onClose} className="btn secondary">Cancel</button>
@@ -195,121 +209,117 @@ export default function Dashboard() {
     );
   }
 
-  const iconOptions = Object.entries(Icons)
-  .filter(([key, val]) => key.startsWith('fa') && val.iconName)
-  .map(([key, val]) => ({
-    name: key,         // e.g. 'faHeart'
-    label: val.iconName, // e.g. 'heart'
-    icon: val,
-  }));
+  function EditMetricModal({ isOpen, onClose, onSave, onDelete, metric }) {
+    const [name, setName] = useState(metric?.name || '');
+    const [scaleType, setScaleType] = useState(metric?.scale_type || 'number');
+    const [icon, setIcon] = useState(metric?.icon || '');
+    const [iconSearch, setIconSearch] = useState('');
 
-function EditMetricModal({ isOpen, onClose, onSave, onDelete, metric }) {
-  const [name, setName] = useState(metric?.name || '');
-  const [scaleType, setScaleType] = useState(metric?.scale_type || 'number');
-  const [icon, setIcon] = useState(metric?.icon || '');
+    useEffect(() => {
+      setName(metric?.name || '');
+      setScaleType(metric?.scale_type || 'number');
+      setIcon(metric?.icon || '');
+    }, [metric]);
 
-  useEffect(() => {
-    setName(metric?.name || '');
-    setScaleType(metric?.scale_type || 'number');
-    setIcon(metric?.icon || '');
-  }, [metric]);
+    const filteredIcons = iconOptions.filter(({ name, label }) =>
+      name.toLowerCase().includes(iconSearch.toLowerCase()) ||
+      label.toLowerCase().includes(iconSearch.toLowerCase())
+    );
 
-  if (!isOpen || !metric) return null;
+    if (!isOpen || !metric) return null;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave({
-      id: metric.id,
-      name: name.trim(),
-      scale_type: scaleType,
-      icon,
-    });
-  };
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      onSave({ id: metric.id, name: name.trim(), scale_type: scaleType, icon });
+    };
 
-  const isProtected = ['Words of Affirmation', 'Acts of Service', 'Receiving Gifts', 'Quality Time', 'Physical Touch'].includes(metric.name);
+    const isProtected = ['Words of Affirmation', 'Acts of Service', 'Receiving Gifts', 'Quality Time', 'Physical Touch'].includes(metric.name);
 
-  return (
-    <div className="modal-overlay">
-      <form className="modal" onSubmit={handleSubmit}>
-        <h2>Edit Metric</h2>
+    return (
+      <div className="modal-overlay">
+        <form className="modal" onSubmit={handleSubmit}>
+          <h2>Edit Metric</h2>
 
-        <label>Name</label>
-        <input
-          type="text"
-          value={name}
-          disabled={isProtected}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
+          <label>Name</label>
+          <input
+            type="text"
+            value={name}
+            disabled={isProtected}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
 
-        <label>Scale</label>
-        <select
-          value={scaleType}
-          disabled={isProtected}
-          onChange={(e) => setScaleType(e.target.value)}
-        >
-          <option value="number">0–10</option>
-          <option value="percentage">Percentage</option>
-        </select>
-
-        <label>Icon</label>
-<div className="icon-grid">
-  {iconOptions.map(({ name, icon: faIcon }) => (
-    <button
-      key={name}
-      type="button"
-      className={`icon-button ${icon === name ? 'selected' : ''}`}
-      onClick={() => setIcon(name)}
-      title={faIcon.iconName}
-    >
-      <FontAwesomeIcon icon={faIcon} />
-    </button>
-  ))}
-</div>
-
-        <div className="modal-buttons space-between">
-          {!isProtected && (
-            <button
-              type="button"
-              onClick={() => onDelete(metric.id)}
-              className="btn danger"
-            >
-              Delete
-            </button>
-          )}
-          <div className="modal-buttons">
-            <button type="button" onClick={onClose} className="btn secondary">
-              Cancel
-            </button>
-            <button type="submit" className="btn primary">Save</button>
+          <label>Scale</label>
+          <select
+            value={scaleType}
+            disabled={isProtected}
+            onChange={(e) => setScaleType(e.target.value)}
+          >
+            <option value="number">0–10</option>
+            <option value="percentage">Percentage</option>
+          </select>
+          <label>Select Icon</label>
+          <input
+            type="text"
+            placeholder="Search icons..."
+            value={iconSearch}
+            onChange={(e) => setIconSearch(e.target.value)}
+            className="icon-search-input"
+          />
+          <div className="icon-grid">
+            {filteredIcons.map(({ name, icon: faIcon }) => (
+              <button
+                key={name}
+                type="button"
+                className={`icon-button ${icon === name ? 'selected' : ''}`}
+                onClick={() => setIcon(name)}
+                title={faIcon.iconName}
+              >
+                <FontAwesomeIcon icon={faIcon} />
+              </button>
+            ))}
           </div>
-        </div>
-      </form>
-    </div>
-  );
-}
+
+          <div className="modal-buttons space-between">
+            {!isProtected && (
+              <button
+                type="button"
+                onClick={() => onDelete(metric.id)}
+                className="btn danger"
+              >
+                Delete
+              </button>
+            )}
+            <div className="modal-buttons">
+              <button type="button" onClick={onClose} className="btn secondary">
+                Cancel
+              </button>
+              <button type="submit" className="btn primary">Save</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="page-content">
       <h1 className="titleh1">My Metrics</h1>
       <div className="dashboard">
-
         <MetricAverage metrics={metrics} />
-
         <div className="metric-grid">
-        {metrics.map((metric) => (
-          <div key={metric.id} className="metric-block">
-            <div className="metric-header">
-              
-              <span className="metric-name">{metric.icon && Icons[metric.icon] && (
-        <FontAwesomeIcon
-          icon={Icons[metric.icon]}
-          className="metric-icon"
-        />
-      )}
-      &nbsp;{metric.name}</span>
-              <button onClick={() => openEditModal(metric)} className="edit-btn"><img height="15px" alt="" src="/icons/gear-solid.svg" /></button>
-            </div>
+          {metrics.map((metric) => (
+            <div key={metric.id} className="metric-block">
+              <div className="metric-header">
+                <span className="metric-name">
+                  {metric.icon && Icons[metric.icon] && (
+                    <FontAwesomeIcon icon={Icons[metric.icon]} className="metric-icon" />
+                  )}&nbsp;{metric.name}
+                </span>
+                <button onClick={() => openEditModal(metric)} className="edit-btn">
+                  <img height="15px" alt="" src="/icons/gear-solid.svg" />
+                </button>
+              </div>
               <div className="metric-subblock">
                 <div className="metric-value">{metric.value}</div>
                 <input
@@ -319,9 +329,9 @@ function EditMetricModal({ isOpen, onClose, onSave, onDelete, metric }) {
                   value={metric.value}
                   onChange={(e) => handleSliderChange(metric.id, Number(e.target.value))}
                 />
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
         </div>
 
         <button onClick={saveMetrics} disabled={saving} className="save-btn">
