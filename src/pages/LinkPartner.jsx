@@ -4,7 +4,6 @@ import { useAuth } from '../contexts/AuthContext';
 
 export default function PartnerLinkPage() {
   const { user } = useAuth();
-  const [generatedCode, setGeneratedCode] = useState('');
   const [partnerCode, setPartnerCode] = useState('');
   const [linkStatus, setLinkStatus] = useState('');
 
