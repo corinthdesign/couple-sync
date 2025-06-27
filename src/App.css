@@ -523,3 +523,24 @@ input:focus[type="range"]::-webkit-slider-thumb {
 #root > div > div > div.modal-overlay > form > div.icon-grid {
   margin: 0 0 1rem 0;
 }
+
+.pageMessage {
+  text-align: center;
+  margin: 0 auto;
+  padding: 3em 2em;
+}
+
+.metric-block h3 {
+  text-align: center;
+  padding: .5em;
+}
+
+.inline-space {
+  padding-right: .5em;
+  position: relative;
+  top: .15em;
+}
+
+.icon-white {
+  filter: invert(1);
+}

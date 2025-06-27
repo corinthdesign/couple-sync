@@ -37,7 +37,9 @@ export default function Dashboard() {
 
   const handleSliderChange = (id, newValue) => {
     setMetrics((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, value: newValue } : m))
+      prev.map((m) =>
+        m.id === id ? { ...m, value: parseFloat(newValue) } : m
+      )
     );
   };
 
@@ -127,11 +129,13 @@ export default function Dashboard() {
     const confirm = window.confirm('Are you sure you want to delete this metric?');
     if (!confirm) return;
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('metrics')
       .delete()
       .eq('id', id)
       .eq('user_id', user.id);
+
+      console.log('Deleted metric result:', data, error);
 
     if (error) {
       alert(`Error deleting metric: ${error.message}`);
