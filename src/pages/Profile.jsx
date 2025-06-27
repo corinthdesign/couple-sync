@@ -13,6 +13,9 @@ const loveLanguageOptions = [
   'Physical Touch'
 ];
 
+const pageTitle = "Profile";
+const pageIcon = <img alt="" height="15px" src="/icons/user-solid-pink.svg" />;
+
 export default function Profile() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -131,8 +134,9 @@ export default function Profile() {
   return (
     <div className="page-content">
     <div className="p-4 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Edit Profile</h1>
-      <form onSubmit={handleSubmit} className="modal space-y-4">
+    <h1 className="pageTitle">{ pageIcon }{ pageTitle }</h1>
+      <div className="metric-block">
+      <form onSubmit={handleSubmit} className="modal-form">
         <input
           type="text"
           value={fullName}
@@ -236,6 +240,7 @@ export default function Profile() {
         <span>Logout</span>
       </button>
       </form>
+    </div>
     </div>
     </div>
   );

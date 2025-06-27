@@ -195,7 +195,7 @@ button:disabled {
   font-family: 'Helvetica Neue', sans-serif;
 }
 
- h1 {
+ .pageTitle {
   font-size: 2rem;
   display: block;
   width: 100%;
@@ -208,6 +208,13 @@ button:disabled {
   color: #ff62d2;
   margin-bottom: 1.5rem;
   z-index: 1;
+}
+
+.pageTitle img {
+  height: 2rem;
+  margin-right: .5rem;
+  position: relative;
+  top: .1em;
 }
 
 /* Each Metric */

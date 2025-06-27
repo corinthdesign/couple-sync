@@ -12,6 +12,8 @@ export default function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [metricToEdit, setMetricToEdit] = useState(null);
+  const pageTitle = "CoupleSync";
+  const pageIcon = <img alt="" height="15px" src="/logo512.png" />;
 
   useEffect(() => {
     async function fetchMetrics() {
@@ -308,33 +310,51 @@ export default function Dashboard() {
 
   return (
     <div className="page-content">
-      <h1 className="titleh1">My Metrics</h1>
+     <h1 className="pageTitle">{ pageIcon }{ pageTitle }</h1>
       <div className="dashboard">
         <MetricAverage metrics={metrics} />
         <div className="metric-grid">
           {metrics.map((metric) => (
-            <div key={metric.id} className="metric-block">
-              <div className="metric-header">
-                <span className="metric-name">
-                  {metric.icon && Icons[metric.icon] && (
-                    <FontAwesomeIcon icon={Icons[metric.icon]} className="metric-icon" />
-                  )}&nbsp;{metric.name}
-                </span>
-                <button onClick={() => openEditModal(metric)} className="edit-btn">
-                  <img height="15px" alt="" src="/icons/gear-solid.svg" />
-                </button>
-              </div>
-              <div className="metric-subblock">
-                <div className="metric-value">{metric.value}</div>
-                <input
-                  type="range"
-                  min={0}
-                  max={metric.scale_type === 'percentage' ? 100 : 10}
-                  value={metric.value}
-                  onChange={(e) => handleSliderChange(metric.id, Number(e.target.value))}
-                />
-              </div>
-            </div>
+            <div
+  key={metric.id}
+  className="metric-block"
+  onClick={(e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const newValue = Math.round(
+      (clickX / rect.width) * (metric.scale_type === 'percentage' ? 100 : 10)
+    );
+    handleSliderChange(metric.id, newValue);
+  }}
+>
+  <input
+    type="range"
+    min={0}
+    max={metric.scale_type === 'percentage' ? 100 : 10}
+    value={metric.value}
+    onChange={(e) => handleSliderChange(metric.id, Number(e.target.value))}
+    className="full-slider"
+  />
+
+  <div className="metric-header">
+    <span className="metric-name">
+      {metric.icon && Icons[metric.icon] && (
+        <FontAwesomeIcon icon={Icons[metric.icon]} className="metric-icon" />
+      )}
+      &nbsp;{metric.name}
+    </span>
+    <button onClick={(e) => {
+      e.stopPropagation();
+      openEditModal(metric);
+    }} className="edit-btn">
+      <img height="15px" alt="" src="/icons/gear-solid.svg" />
+    </button>
+  </div>
+
+  <div className="metric-subblock">
+    <div className="metric-value">{metric.value}</div>
+  </div>
+</div>
           ))}
         </div>
 

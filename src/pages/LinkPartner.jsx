@@ -6,6 +6,8 @@ export default function PartnerLinkPage() {
   const { user } = useAuth();
   const [partnerCode, setPartnerCode] = useState('');
   const [linkStatus, setLinkStatus] = useState('');
+  const pageTitle = "Your Partner";
+  const pageIcon = <img alt="" height="15px" src="/icons/heart-solid.svg" />;
 
   const generateCode = async () => {
     const code = user.id.slice(0, 6) + Math.random().toString(36).substring(2, 8);
@@ -13,6 +15,7 @@ export default function PartnerLinkPage() {
     const { error } = await supabase
       .from('partner_codes')
       .upsert({ user_id: user.id, code });
+      console.log('Generated code:', code);
 
     if (error) {
       console.error('Error saving code:', error.message);
@@ -53,7 +56,7 @@ export default function PartnerLinkPage() {
 
   return (
     <div className="page-content">
-      <h1 className="titleh1">Your Partner</h1>
+      <h1 className="pageTitle">{ pageIcon }{ pageTitle }</h1>
       <div className="dashboard">
         <div className="pageMessage">
           <h2>You haven't linked a partner yet!</h2>
@@ -78,8 +81,6 @@ export default function PartnerLinkPage() {
             Link Partner
           </button>
         </div>
-
-        {linkStatus && <p className="syncNum">{linkStatus}</p>}
       </div>
     </div>
   );
