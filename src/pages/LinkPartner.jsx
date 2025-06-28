@@ -34,22 +34,20 @@ export default function PartnerLinkPage() {
   };
 
   const linkPartner = async () => {
-    const inputCode = partnerCode.trim().toUpperCase();
-    console.log('Looking up partner code:', inputCode);
+    const cleanedCode = partnerCode.trim().toLowerCase();
+    console.log('Searching for code:', cleanedCode);
   
     const { data, error } = await supabase
       .from('partner_codes')
       .select('user_id')
-      .eq('code', inputCode)
-      .maybeSingle();  // Changed from .single()
+      .eq('code', cleanedCode)
+      .maybeSingle();
   
-    if (!data) {
-      console.warn('No partner code found for input:', inputCode);
-      setLinkStatus('Invalid code');
-      return;
+    console.log('Partner lookup result:', { data, error });
+  
+    if (error || !data) {
+      return setLinkStatus('Invalid code');
     }
-  
-    console.log('Found partner user ID:', data.user_id);
   
     const partnerId = data.user_id;
   
@@ -58,12 +56,12 @@ export default function PartnerLinkPage() {
       .insert([{ user_a: partnerId, user_b: user.id }]);
   
     if (relError) {
-      console.error('Error inserting relationship:', relError.message);
       setLinkStatus('Failed to link partner');
     } else {
       setLinkStatus('Partner linked!');
     }
   };
+  
   
 
   return (
