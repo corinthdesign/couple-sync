@@ -10,12 +10,14 @@ export default function PartnerLinkPage() {
   const pageIcon = <img alt="" height="15px" src="/icons/heart-solid.svg" />;
 
   const generateCode = async () => {
-    const code = user.id.slice(0, 6) + Math.random().toString(36).substring(2, 8);
+    const rawCode = user.id.slice(0, 6) + Math.random().toString(36).substring(2, 8);
+    const code = rawCode.toUpperCase(); // Normalize to uppercase
 
     const { error } = await supabase
       .from('partner_codes')
       .upsert({ user_id: user.id, code });
-      console.log('Generated code:', code);
+
+    console.log('Generated and saved code:', code);
 
     if (error) {
       console.error('Error saving code:', error.message);
@@ -25,20 +27,27 @@ export default function PartnerLinkPage() {
         await navigator.clipboard.writeText(code);
         setLinkStatus('Copied to clipboard!');
       } catch (err) {
+        console.error('Clipboard error:', err);
         setLinkStatus('Code generated, but failed to copy');
       }
     }
   };
 
   const linkPartner = async () => {
+    const inputCode = partnerCode.trim().toUpperCase(); // Normalize input
+    console.log('Looking up partner code:', inputCode);
+
     const { data, error } = await supabase
       .from('partner_codes')
       .select('user_id')
-      .eq('code', partnerCode)
+      .eq('code', inputCode)
       .single();
 
+    console.log('Partner lookup result:', { data, error });
+
     if (error || !data) {
-      return setLinkStatus('Invalid code');
+      setLinkStatus('Invalid code');
+      return;
     }
 
     const partnerId = data.user_id;
@@ -48,6 +57,7 @@ export default function PartnerLinkPage() {
       .insert([{ user_a: partnerId, user_b: user.id }]);
 
     if (relError) {
+      console.error('Error inserting relationship:', relError.message);
       setLinkStatus('Failed to link partner');
     } else {
       setLinkStatus('Partner linked!');
@@ -56,7 +66,7 @@ export default function PartnerLinkPage() {
 
   return (
     <div className="page-content">
-      <h1 className="pageTitle">{ pageIcon }{ pageTitle }</h1>
+      <h1 className="pageTitle">{pageIcon}{pageTitle}</h1>
       <div className="dashboard">
         <div className="pageMessage">
           <h2>You haven't linked a partner yet!</h2>
