@@ -10,14 +10,13 @@ export default function PartnerLinkPage() {
   const pageIcon = <img alt="" height="15px" src="/icons/heart-solid.svg" />;
 
   const generateCode = async () => {
-    const rawCode = user.id.slice(0, 6) + Math.random().toString(36).substring(2, 8);
-    const code = rawCode.toUpperCase(); // Normalize to uppercase
+    const code = user.id.slice(0, 6) + Math.random().toString(36).substring(2, 8);
 
     const { error } = await supabase
       .from('partner_codes')
       .upsert({ user_id: user.id, code });
 
-    console.log('Generated and saved code:', code);
+    console.log('Generated code:', code);
 
     if (error) {
       console.error('Error saving code:', error.message);
@@ -27,46 +26,42 @@ export default function PartnerLinkPage() {
         await navigator.clipboard.writeText(code);
         setLinkStatus('Copied to clipboard!');
       } catch (err) {
-        console.error('Clipboard error:', err);
         setLinkStatus('Code generated, but failed to copy');
       }
     }
   };
 
   const linkPartner = async () => {
-    const cleanedCode = partnerCode.trim().toLowerCase();
-    console.log('Searching for code:', cleanedCode);
-  
+    const normalizedCode = partnerCode.trim().toUpperCase();
     const { data, error } = await supabase
       .from('partner_codes')
       .select('user_id')
-      .eq('code', cleanedCode)
+      .eq('code', normalizedCode)
       .maybeSingle();
-  
+
     console.log('Partner lookup result:', { data, error });
-  
-    if (error || !data) {
+
+    if (error || !data?.user_id) {
       return setLinkStatus('Invalid code');
     }
-  
+
     const partnerId = data.user_id;
-  
+    const [userA, userB] = [user.id, partnerId].sort();
+
     const { error: relError } = await supabase
       .from('relationships')
-      .insert([{ user_a: partnerId, user_b: user.id }]);
-  
+      .insert([{ user_a: userA, user_b: userB }]);
+
     if (relError) {
       setLinkStatus('Failed to link partner');
     } else {
       setLinkStatus('Partner linked!');
     }
   };
-  
-  
 
   return (
     <div className="page-content">
-      <h1 className="pageTitle">{pageIcon}{pageTitle}</h1>
+      <h1 className="pageTitle">{ pageIcon }{ pageTitle }</h1>
       <div className="dashboard">
         <div className="pageMessage">
           <h2>You haven't linked a partner yet!</h2>
