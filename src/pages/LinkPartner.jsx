@@ -10,48 +10,49 @@ export default function PartnerLinkPage() {
   const pageIcon = <img alt="" height="15px" src="/icons/heart-solid.svg" />;
 
   const generateCode = async () => {
-    const code = user.id.slice(0, 6) + Math.random().toString(36).substring(2, 8);
-
-    const { error } = await supabase
+    const code = (user.id.slice(0, 6) + Math.random().toString(36).substring(2, 8)).toUpperCase();
+  
+    console.log('Generated code:', code);
+  
+    const { data, error } = await supabase
       .from('partner_codes')
       .upsert({ user_id: user.id, code });
-
-    console.log('Generated code:', code);
-
+  
+    console.log('Upsert result:', { data, error });
+  
     if (error) {
-      console.error('Error saving code:', error.message);
       setLinkStatus('Error generating code.');
     } else {
       try {
         await navigator.clipboard.writeText(code);
         setLinkStatus('Copied to clipboard!');
-      } catch (err) {
+      } catch {
         setLinkStatus('Code generated, but failed to copy');
       }
     }
   };
+  
 
   const linkPartner = async () => {
-    const normalizedCode = partnerCode.trim().toUpperCase();
+    const cleanedCode = partnerCode.trim().toUpperCase();
     const { data, error } = await supabase
       .from('partner_codes')
       .select('user_id')
-      .eq('code', normalizedCode)
+      .eq('code', cleanedCode)
       .maybeSingle();
-
+  
     console.log('Partner lookup result:', { data, error });
-
-    if (error || !data?.user_id) {
+  
+    if (!data?.user_id) {
       return setLinkStatus('Invalid code');
     }
-
+  
     const partnerId = data.user_id;
-    const [userA, userB] = [user.id, partnerId].sort();
-
+  
     const { error: relError } = await supabase
       .from('relationships')
-      .insert([{ user_a: userA, user_b: userB }]);
-
+      .insert([{ user_a: partnerId, user_b: user.id }]);
+  
     if (relError) {
       setLinkStatus('Failed to link partner');
     } else {
