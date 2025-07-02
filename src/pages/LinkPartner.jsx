@@ -9,6 +9,7 @@ export default function PartnerLinkPage() {
   const [partnerCode, setPartnerCode] = useState('');
   const [linkStatus, setLinkStatus] = useState('');
   const [isLinked, setIsLinked] = useState(false);
+  const [setPartnerId] = useState(null);
   const [partnerMetrics, setPartnerMetrics] = useState([]);
   const [partnerProfile, setPartnerProfile] = useState(null);
 
@@ -34,7 +35,7 @@ export default function PartnerLinkPage() {
     if (relationship) {
       const partner = relationship.user_a === user.id ? relationship.user_b : relationship.user_a;
       setIsLinked(true);
-      setPartnerCode(partner);
+      setPartnerId(partner);
       fetchPartnerMetrics(partner);
       fetchPartnerProfile(partner);
     }
