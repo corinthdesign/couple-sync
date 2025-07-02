@@ -9,7 +9,7 @@ export default function PartnerLinkPage() {
   const [partnerCode, setPartnerCode] = useState('');
   const [linkStatus, setLinkStatus] = useState('');
   const [isLinked, setIsLinked] = useState(false);
-  const [setPartnerId] = useState(null);
+  const [partnerId, setPartnerId] = useState(null);
   const [partnerMetrics, setPartnerMetrics] = useState([]);
   const [partnerProfile, setPartnerProfile] = useState(null);
 
@@ -106,7 +106,7 @@ export default function PartnerLinkPage() {
   const fetchPartnerProfile = async (partnerId) => {
     const { data, error } = await supabase
       .from('profiles')
-      .select('full_name, photo_url')
+      .select('username, avatar_url')
       .eq('id', partnerId)
       .single();
 
@@ -152,13 +152,13 @@ export default function PartnerLinkPage() {
         ) : (
           <div className="metric-block">
             <h2 className="syncNum">
-              {partnerProfile?.full_name}
+              Partner: {partnerProfile?.username || 'Loading...'}
             </h2>
-            {partnerProfile?.photo_url && (
+            {partnerProfile?.avatar_url && (
               <img
-                src={partnerProfile.photo_url}
-                alt="Partner photo"
-                className="photo"
+                src={partnerProfile.avatar_url}
+                alt="Partner Avatar"
+                className="avatar"
               />
             )}
             <div className="metric-grid">
