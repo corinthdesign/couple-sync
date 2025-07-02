@@ -34,7 +34,7 @@ export default function PartnerLinkPage() {
     if (relationship) {
       const partner = relationship.user_a === user.id ? relationship.user_b : relationship.user_a;
       setIsLinked(true);
-      setPartnerId(partner);
+      setPartnerCode(partner);
       fetchPartnerMetrics(partner);
       fetchPartnerProfile(partner);
     }
