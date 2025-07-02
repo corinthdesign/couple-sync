@@ -9,7 +9,6 @@ export default function PartnerLinkPage() {
   const [partnerCode, setPartnerCode] = useState('');
   const [linkStatus, setLinkStatus] = useState('');
   const [isLinked, setIsLinked] = useState(false);
-  const [partnerId, setPartnerId] = useState(null);
   const [partnerMetrics, setPartnerMetrics] = useState([]);
   const [partnerProfile, setPartnerProfile] = useState(null);
 
