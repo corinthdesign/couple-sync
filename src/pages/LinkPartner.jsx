@@ -10,27 +10,40 @@ export default function PartnerLinkPage() {
   const pageIcon = <img alt="" height="15px" src="/icons/heart-solid.svg" />;
 
   const generateCode = async () => {
-    const code = (user.id.slice(0, 6) + Math.random().toString(36).substring(2, 8)).toUpperCase();
+    // Check if a code already exists
+    const { data: existing, error: fetchError } = await supabase
+      .from('partner_codes')
+      .select('code')
+      .eq('user_id', user.id)
+      .single();
   
-    console.log('Generated code:', code);
+    if (fetchError && fetchError.code !== 'PGRST116') {
+      console.error('Error checking existing code:', fetchError.message);
+      setLinkStatus('Failed to check existing code.');
+      return;
+    }
   
-    const { data, error } = await supabase
+    const code = existing?.code || (user.id.slice(0, 6) + Math.random().toString(36).substring(2, 8)).toUpperCase();
+  
+    // Save or overwrite the code
+    const { error: upsertError } = await supabase
       .from('partner_codes')
       .upsert({ user_id: user.id, code });
   
-    console.log('Upsert result:', { data, error });
-  
-    if (error) {
-      setLinkStatus('Error generating code.');
+    if (upsertError) {
+      console.error('Error saving code:', upsertError.message);
+      setLinkStatus('Error saving code.');
     } else {
       try {
         await navigator.clipboard.writeText(code);
         setLinkStatus('Copied to clipboard!');
-      } catch {
-        setLinkStatus('Code generated, but failed to copy');
+      } catch (err) {
+        setLinkStatus(`Here’s your code: ${code} (copy failed)`);
       }
     }
   };
+  
+  
   
 
   const linkPartner = async () => {
