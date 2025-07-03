@@ -220,10 +220,13 @@ button:disabled {
 /* Each Metric */
 .metric-block {
   margin-bottom: 1.5rem;
+  min-height: 240px;
+  position: relative;
   background: #f9f9f9;
   border-radius: 16px;
   padding: 1rem;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  overflow: hidden;
 }
 
 .metric-header {
@@ -237,11 +240,17 @@ button:disabled {
   font-weight: 600;
   font-size: 1.75rem;
   color: #333;
+  padding: .5em 0;
 }
 
 .metric-subblock {
-  display: flex;
-  gap: 2em;
+  display: grid;
+  position: relative;
+  border-radius: 15px;
+  overflow: hidden;
+  grid-template-rows: 50% 50%;
+  z-index: 2;
+  height: 100%;
 }
 
 .edit-btn {
@@ -263,8 +272,9 @@ input[type="range"] {
 }
 
 .metric-value {
-  text-align: right;
-  font-size: 2rem;
+  display: flex;
+  text-align: left;
+  font-size: 3rem;
   margin-top: 0.25rem;
   color: #666;
 }
@@ -537,6 +547,14 @@ input:focus[type="range"]::-webkit-slider-thumb {
   padding: 3em 2em;
 }
 
+
+.metric-block {
+  display: grid;
+  grid-template-columns: 80% 20%;
+  align-items: center;
+  align-content: center;
+}
+
 .metric-block h3 {
   text-align: center;
   padding: .5em;
@@ -550,4 +568,99 @@ input:focus[type="range"]::-webkit-slider-thumb {
 
 .icon-white {
   filter: invert(1);
+}
+
+/* VerticalMeter styling */
+.vertical-meter {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #dadada;
+  z-index: 1;
+}
+
+.vertical-meter-fill {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(to bottom, #ff62d2, #ff00b7);
+  transition: height 0.3s ease;
+}
+
+.horizontal-slider {
+  position: relative;
+  width: 100%;
+  height: 28px;
+  background-color: #dadada;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.horizontal-slider-fill {
+  position: absolute;
+  left: 0;
+  height: 100%;
+  transition: width 0.2s ease;
+}
+
+.userPhoto {
+  border-radius: 50%;
+  height: 200px;
+  width: 200px;
+  object-fit: cover;
+  margin-bottom: 0.5rem;
+}
+
+.small {
+  height: 50px;
+  width: 50px;
+}
+
+.pageMessage {
+  display: flex;
+  align-items: center;
+  gap: .5em;
+  padding: 2em 0;
+}
+
+.averageMessage {
+  text-align: center;
+}
+
+.average {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+}
+
+.averageNum {
+  padding-left: .25em;
+  color: #ff62d2;
+}
+
+.couples-dashboard {
+  display: block;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+}
+
+.couple-columns {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.person {
+  text-align: center;
+}
+
+.couple-header {
+ text-align: center;
+ justify-content: center;
+ padding-bottom: 2em;
 }

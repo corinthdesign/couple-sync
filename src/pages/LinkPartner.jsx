@@ -1,23 +1,38 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
-import * as Icons from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as Icons from '@fortawesome/free-solid-svg-icons';
+import MetricAverage from '../components/MetricAverage';
+
+const VerticalMeter = ({ percentage }) => {
+  const capped = Math.max(0, Math.min(100, percentage));
+  return (
+    <div className="vertical-meter">
+      <div
+        className="vertical-meter-fill"
+        style={{
+          height: `${capped}%`,
+        }}
+      />
+    </div>
+  );
+};
 
 export default function PartnerLinkPage() {
   const { user } = useAuth();
   const [partnerCode, setPartnerCode] = useState('');
   const [linkStatus, setLinkStatus] = useState('');
   const [partnerLinked, setPartnerLinked] = useState(false);
+  const [partnerId, setPartnerId] = useState(null);
   const [partnerMetrics, setPartnerMetrics] = useState([]);
   const [partnerProfile, setPartnerProfile] = useState(null);
   const pageTitle = "Your Partner";
   const pageIcon = <img alt="" height="15px" src="/icons/heart-solid.svg" />;
 
   const generateCode = async () => {
-    const code = (user.id.slice(0, 6) + Math.random().toString(36).substring(2, 8)).toUpperCase();
+    const code = user.id.slice(0, 6).toUpperCase() + Math.random().toString(36).substring(2, 8).toUpperCase();
     const { error } = await supabase.from('partner_codes').upsert({ user_id: user.id, code });
-
     if (error) {
       console.error('Error saving code:', error.message);
       setLinkStatus('Error generating code.');
@@ -32,12 +47,11 @@ export default function PartnerLinkPage() {
   };
 
   const linkPartner = async () => {
-    const cleanedCode = partnerCode.trim().toUpperCase();
     const { data, error } = await supabase
       .from('partner_codes')
       .select('user_id')
-      .eq('code', cleanedCode)
-      .single();
+      .eq('code', partnerCode.toUpperCase())
+      .maybeSingle();
 
     console.log('Partner lookup result:', { data, error });
 
@@ -46,7 +60,6 @@ export default function PartnerLinkPage() {
     }
 
     const partnerId = data.user_id;
-
     const { error: relError } = await supabase
       .from('relationships')
       .insert([{ user_a: partnerId, user_b: user.id }]);
@@ -56,39 +69,14 @@ export default function PartnerLinkPage() {
     } else {
       setLinkStatus('Partner linked!');
       setPartnerLinked(true);
-      fetchPartnerData(partnerId);
-    }
-  };
-
-  const fetchPartnerData = async (partnerId) => {
-    const { data: metricsData, error: metricsError } = await supabase
-      .from('metrics')
-      .select('*')
-      .eq('user_id', partnerId);
-
-    if (!metricsError) {
-      setPartnerMetrics(metricsData);
-    } else {
-      console.error('Error fetching partner metrics:', metricsError);
-    }
-
-    const { data: profileData, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', partnerId)
-      .single();
-
-    if (!profileError) {
-      setPartnerProfile(profileData);
-    } else {
-      console.error('Error fetching partner profile:', profileError);
+      setPartnerId(partnerId);
     }
   };
 
   const checkRelationship = useCallback(async () => {
     const { data, error } = await supabase
       .from('relationships')
-      .select('*')
+      .select('user_a, user_b')
       .or(`user_a.eq.${user.id},user_b.eq.${user.id}`);
 
     if (error) {
@@ -96,17 +84,38 @@ export default function PartnerLinkPage() {
       return;
     }
 
-    if (!data || data.length === 0) return;
-
-    const match = data[0];
-    const partnerId = match.user_a === user.id ? match.user_b : match.user_a;
-    setPartnerLinked(true);
-    fetchPartnerData(partnerId);
+    if (data.length > 0) {
+      const relationship = data[0];
+      const partnerId = relationship.user_a === user.id ? relationship.user_b : relationship.user_a;
+      setPartnerLinked(true);
+      setPartnerId(partnerId);
+    }
   }, [user.id]);
 
+  const fetchPartnerData = useCallback(async () => {
+    if (!partnerId) return;
+
+    const [{ data: metrics, error: metricsError }, { data: profile, error: profileError }] = await Promise.all([
+      supabase.from('metrics').select('*').eq('user_id', partnerId),
+      supabase.from('profiles').select('*').eq('id', partnerId).single()
+    ]);
+
+    if (metricsError) console.error('Error fetching metrics:', metricsError);
+    if (profileError) console.error('Error fetching profile:', profileError);
+
+    console.log('Fetched partner profile:', profile);
+
+    setPartnerMetrics(metrics || []);
+    setPartnerProfile(profile || null);
+  }, [partnerId]);
+
   useEffect(() => {
-    if (user?.id) checkRelationship();
-  }, [user?.id, checkRelationship]);
+    checkRelationship();
+  }, [checkRelationship]);
+
+  useEffect(() => {
+    fetchPartnerData();
+  }, [fetchPartnerData]);
 
   return (
     <div className="page-content">
@@ -117,7 +126,6 @@ export default function PartnerLinkPage() {
             <div className="pageMessage">
               <h2>You haven't linked a partner yet!</h2>
             </div>
-
             <div className="metric-block">
               <h3>Give this code to your partner</h3>
               <button onClick={generateCode} className="add-btn">
@@ -131,7 +139,7 @@ export default function PartnerLinkPage() {
                 type="text"
                 value={partnerCode}
                 onChange={(e) => setPartnerCode(e.target.value)}
-                placeholder="e.g., ABCD12"
+                placeholder="e.g., ABC123"
               />
               <button onClick={linkPartner} className="save-btn">
                 Link Partner
@@ -140,35 +148,35 @@ export default function PartnerLinkPage() {
           </>
         ) : (
           <>
-            {partnerProfile && (
-              <div className="pageMessage">
-                <h2>Partner: {partnerProfile.name}</h2>
-                {partnerProfile.avatar_url && (
-                  <img src={partnerProfile.avatar_url} alt="Partner avatar" className="avatar" />
-                )}
-              </div>
-            )}
+            <div className="pageMessage">
+              {partnerProfile?.photo_url && <img src={partnerProfile.photo_url} alt="Avatar" className="userPhoto small" />}
+              <h2>{partnerProfile?.full_name}</h2>
+            </div>
+
+            <div className="average"><h2 className="averageMessage">Their love tank is at</h2><MetricAverage metrics={partnerMetrics} /></div>
+
             <div className="metric-grid">
               {partnerMetrics.map((metric) => (
-                <div key={metric.id} className="metric-block">
-                  <div className="metric-header">
-                    <span className="metric-name">
-                      {metric.icon && Icons[metric.icon] && (
-                        <FontAwesomeIcon icon={Icons[metric.icon]} className="metric-icon" />
-                      )}
-                      &nbsp;{metric.name}
-                    </span>
+                <div key={metric.id} className="metric-block partner">
+                  <div className="metric-subblock">
+                    <div className="metric-header">
+                      <span className="metric-name">
+                        {metric.icon && Icons[metric.icon] && (
+                          <FontAwesomeIcon icon={Icons[metric.icon]} className="metric-icon" />
+                        )}
+                        &nbsp;{metric.name}
+                      </span>
+                    </div>
+                    <div className="metric-value">{metric.value}%</div>
                   </div>
                   <div className="metric-subblock">
-                    <div className="metric-value">{metric.value}</div>
+                    <VerticalMeter percentage={metric.value} />
                   </div>
                 </div>
               ))}
             </div>
           </>
         )}
-
-        {linkStatus && !partnerLinked && <p className="syncNum">{linkStatus}</p>}
       </div>
     </div>
   );

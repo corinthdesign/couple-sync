@@ -1,6 +1,5 @@
 // App.js
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Profile from './pages/Profile';
 import LinkPartner from "./pages/LinkPartner";
@@ -8,6 +7,8 @@ import Settings from "./pages/Settings";
 import Onboarding from './pages/Onboarding';
 import RequireAuth from './components/RequireAuth';
 import BottomNav from './components/BottomNav';
+import SyncDashboard from './pages/SyncDashboard';
+import Dashboard from './pages/Dashboard';
 import './App.css';
 
 
@@ -17,7 +18,7 @@ function App() {
       <Routes>
         <Route path="/" element={
           <RequireAuth>
-            <Dashboard />
+            <SyncDashboard />
           </RequireAuth>
         } 
         />
@@ -37,6 +38,20 @@ function App() {
           </RequireAuth>
         }
         />
+
+        <Route path="/" element={
+          <RequireAuth>
+            <SyncDashboard />
+          </RequireAuth>
+        }
+        /> 
+
+        <Route path="/dashboard" element={
+          <RequireAuth>
+            <Dashboard />
+          </RequireAuth>
+        }
+        /> 
 
         <Route path="/profile" element={
           <RequireAuth>

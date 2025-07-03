@@ -22,9 +22,8 @@ export default function MetricAverage({ metrics }) {
     
   
     return (
-      <div className="average-score text-center my-4">
-        <h2 className="text-xl font-semibold">How Full is Your Love Tank?</h2>
-        <div className="syncNum text-4xl font-bold text-blue-600">{rounded}%</div>
+      <div >
+        <h2 className="averageNum">{rounded}%</h2>
       </div>
     );
   }

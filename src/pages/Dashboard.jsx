@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import MetricAverage from '../components/MetricAverage';
 import * as Icons from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { HorizontalSliderInput} from '../components/HorizontalSliderInput';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -13,7 +14,7 @@ export default function Dashboard() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [metricToEdit, setMetricToEdit] = useState(null);
   const pageTitle = "CoupleSync";
-  const pageIcon = <img alt="" height="15px" src="/logo512.png" />;
+  const pageIcon = <img alt="" height="15px" src="/icons/chart-line-solid-pink.svg" />;
 
   useEffect(() => {
     async function fetchMetrics() {
@@ -312,7 +313,7 @@ export default function Dashboard() {
     <div className="page-content">
      <h1 className="pageTitle">{ pageIcon }{ pageTitle }</h1>
       <div className="dashboard">
-        <MetricAverage metrics={metrics} />
+      <div className="average"><h2 className="averageMessage">Your love tank is at</h2><MetricAverage metrics={metrics} /></div>
         <div className="metric-grid">
           {metrics.map((metric) => (
             <div
@@ -327,14 +328,6 @@ export default function Dashboard() {
     handleSliderChange(metric.id, newValue);
   }}
 >
-  <input
-    type="range"
-    min={0}
-    max={metric.scale_type === 'percentage' ? 100 : 10}
-    value={metric.value}
-    onChange={(e) => handleSliderChange(metric.id, Number(e.target.value))}
-    className="full-slider"
-  />
 
   <div className="metric-header">
     <span className="metric-name">
@@ -354,6 +347,12 @@ export default function Dashboard() {
   <div className="metric-subblock">
     <div className="metric-value">{metric.value}</div>
   </div>
+  <HorizontalSliderInput
+  value={metric.value}
+  min={0}
+  max={metric.scale_type === 'percentage' ? 100 : 10}
+  onChange={(newVal) => handleSliderChange(metric.id, newVal)}
+/>
 </div>
           ))}
         </div>

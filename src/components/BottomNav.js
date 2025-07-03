@@ -10,8 +10,8 @@ export default function BottomNav() {
         <div><img alt="" height="15px" src="/logo512.png" /></div>
         <span>Sync Dashboard</span>
       </NavLink>
-      <NavLink to="/" className="nav-item">
-        <div><img alt="" height="15px" src="/icons/sliders-solid.svg" /></div>
+      <NavLink to="/dashboard" className="nav-item">
+        <div><img alt="" height="15px" src="/icons/chart-line-solid.svg" /></div>
         <span>My Metrics</span>
       </NavLink>
       <NavLink to="/link" className="nav-item">
