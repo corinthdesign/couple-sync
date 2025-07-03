@@ -1,6 +1,6 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 
-export function HorizontalSliderInput({
+export default function HorizontalSliderInput({
   value,
   onChange,
   min = 0,
@@ -10,47 +10,26 @@ export function HorizontalSliderInput({
   const containerRef = useRef(null);
   const [dragging, setDragging] = useState(false);
 
-  const calculateValueFromPosition = (clientX) => {
+  const calculateValueFromPosition = useCallback((clientX) => {
     if (!containerRef.current) return;
-
     const rect = containerRef.current.getBoundingClientRect();
     const relativeX = clientX - rect.left;
     const percentage = relativeX / rect.width;
     const clamped = Math.max(0, Math.min(1, percentage));
     const newValue = Math.round(clamped * (max - min) + min);
-
     onChange(newValue);
-  };
+  }, [min, max, onChange]);
 
-  const handleMouseDown = (e) => {
-    setDragging(true);
-    calculateValueFromPosition(e.clientX);
-  };
+  const handleMouseMove = useCallback((e) => {
+    if (dragging) calculateValueFromPosition(e.clientX);
+  }, [dragging, calculateValueFromPosition]);
 
-  const handleMouseMove = (e) => {
-    if (dragging) {
-      calculateValueFromPosition(e.clientX);
-    }
-  };
+  const handleTouchMove = useCallback((e) => {
+    if (dragging) calculateValueFromPosition(e.touches[0].clientX);
+  }, [dragging, calculateValueFromPosition]);
 
-  const handleMouseUp = () => {
-    setDragging(false);
-  };
-
-  const handleTouchStart = (e) => {
-    setDragging(true);
-    calculateValueFromPosition(e.touches[0].clientX);
-  };
-
-  const handleTouchMove = (e) => {
-    if (dragging) {
-      calculateValueFromPosition(e.touches[0].clientX);
-    }
-  };
-
-  const handleTouchEnd = () => {
-    setDragging(false);
-  };
+  const handleMouseUp = useCallback(() => setDragging(false), []);
+  const handleTouchEnd = useCallback(() => setDragging(false), []);
 
   useEffect(() => {
     if (dragging) {
@@ -71,7 +50,7 @@ export function HorizontalSliderInput({
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [dragging]);
+  }, [dragging, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
 
   const percentage = ((value - min) / (max - min)) * 100;
 
@@ -79,8 +58,14 @@ export function HorizontalSliderInput({
     <div
       ref={containerRef}
       className="horizontal-slider"
-      onMouseDown={handleMouseDown}
-      onTouchStart={handleTouchStart}
+      onMouseDown={(e) => {
+        setDragging(true);
+        calculateValueFromPosition(e.clientX);
+      }}
+      onTouchStart={(e) => {
+        setDragging(true);
+        calculateValueFromPosition(e.touches[0].clientX);
+      }}
     >
       <div
         className="horizontal-slider-fill"
