@@ -8,10 +8,11 @@ export default function PartnerLinkPage() {
   const { user } = useAuth();
   const [partnerCode, setPartnerCode] = useState('');
   const [linkStatus, setLinkStatus] = useState('');
-  const [isLinked, setIsLinked] = useState(false);
-  const [partnerId, setPartnerId] = useState(null);
+  const [partnerLinked, setPartnerLinked] = useState(false);
   const [partnerMetrics, setPartnerMetrics] = useState([]);
   const [partnerProfile, setPartnerProfile] = useState(null);
+  const pageTitle = 'Your Partner';
+  const pageIcon = <img alt="" height="15px" src="/icons/heart-solid.svg" />;
 
   useEffect(() => {
     checkRelationship();
@@ -20,7 +21,7 @@ export default function PartnerLinkPage() {
   const checkRelationship = async () => {
     const { data, error } = await supabase
       .from('relationships')
-      .select('user_a, user_b')
+      .select('*')
       .or(`user_a.eq.${user.id},user_b.eq.${user.id}`);
 
     if (error) {
@@ -28,66 +29,16 @@ export default function PartnerLinkPage() {
       return;
     }
 
-    const relationship = data.find(
-      (rel) => rel.user_a === user.id || rel.user_b === user.id
-    );
-
-    if (relationship) {
-      const partner = relationship.user_a === user.id ? relationship.user_b : relationship.user_a;
-      setIsLinked(true);
-      setPartnerId(partner);
-      fetchPartnerMetrics(partner);
-      fetchPartnerProfile(partner);
-    }
-  };
-
-  const generateCode = async () => {
-    const code = (user.id.slice(0, 6) + Math.random().toString(36).substring(2, 8)).toUpperCase();
-    const { error } = await supabase.from('partner_codes').upsert({ user_id: user.id, code });
-    console.log('Generated code:', code);
-
-    if (error) {
-      console.error('Error saving code:', error.message);
-      setLinkStatus('Error generating code.');
-    } else {
-      try {
-        await navigator.clipboard.writeText(code);
-        setLinkStatus('Copied to clipboard!');
-      } catch (err) {
-        setLinkStatus('Code generated, but failed to copy');
-      }
-    }
-  };
-
-  const linkPartner = async () => {
-    const codeToCheck = partnerCode.trim().toUpperCase();
-    const { data, error } = await supabase
-      .from('partner_codes')
-      .select('user_id')
-      .eq('code', codeToCheck)
-      .single();
-
-    console.log('Partner lookup result:', { data, error });
-
-    if (error || !data) {
-      return setLinkStatus('Invalid code');
+    if (!data || data.length === 0) {
+      return;
     }
 
-    const partnerId = data.user_id;
+    const relationship = data[0];
+    const partnerId = relationship.user_a === user.id ? relationship.user_b : relationship.user_a;
 
-    const { error: relError } = await supabase
-      .from('relationships')
-      .insert([{ user_a: partnerId, user_b: user.id }]);
-
-    if (relError) {
-      setLinkStatus('Failed to link partner');
-    } else {
-      setLinkStatus('Partner linked!');
-      setIsLinked(true);
-      setPartnerId(partnerId);
-      fetchPartnerMetrics(partnerId);
-      fetchPartnerProfile(partnerId);
-    }
+    fetchPartnerProfile(partnerId);
+    fetchPartnerMetrics(partnerId);
+    setPartnerLinked(true);
   };
 
   const fetchPartnerMetrics = async (partnerId) => {
@@ -106,7 +57,7 @@ export default function PartnerLinkPage() {
   const fetchPartnerProfile = async (partnerId) => {
     const { data, error } = await supabase
       .from('profiles')
-      .select('username, avatar_url')
+      .select('*')
       .eq('id', partnerId)
       .single();
 
@@ -117,13 +68,61 @@ export default function PartnerLinkPage() {
     }
   };
 
+  const generateCode = async () => {
+    const code = (user.id.slice(0, 6) + Math.random().toString(36).substring(2, 8)).toUpperCase();
+
+    const { error } = await supabase
+      .from('partner_codes')
+      .upsert({ user_id: user.id, code });
+
+    if (error) {
+      console.error('Error saving code:', error.message);
+      setLinkStatus('Error generating code.');
+    } else {
+      try {
+        await navigator.clipboard.writeText(code);
+        setLinkStatus('Copied to clipboard!');
+      } catch (err) {
+        setLinkStatus('Code generated, but failed to copy');
+      }
+    }
+  };
+
+  const linkPartner = async () => {
+    const normalizedCode = partnerCode.trim().toUpperCase();
+
+    const { data, error } = await supabase
+      .from('partner_codes')
+      .select('user_id')
+      .eq('code', normalizedCode);
+
+    console.log('Partner lookup result:', { data, error });
+
+    if (error || !data || data.length === 0) {
+      return setLinkStatus('Invalid code');
+    }
+
+    const partnerId = data[0].user_id;
+
+    const { error: relError } = await supabase
+      .from('relationships')
+      .insert([{ user_a: partnerId, user_b: user.id }]);
+
+    if (relError) {
+      setLinkStatus('Failed to link partner');
+    } else {
+      setLinkStatus('Partner linked!');
+      setPartnerLinked(true);
+      fetchPartnerProfile(partnerId);
+      fetchPartnerMetrics(partnerId);
+    }
+  };
+
   return (
     <div className="page-content">
-      <h1 className="pageTitle">
-        <img alt="" height="15px" src="/icons/heart-solid.svg" /> Your Partner
-      </h1>
+      <h1 className="pageTitle">{pageIcon}{pageTitle}</h1>
       <div className="dashboard">
-        {!isLinked ? (
+        {!partnerLinked ? (
           <>
             <div className="pageMessage">
               <h2>You haven't linked a partner yet!</h2>
@@ -142,7 +141,7 @@ export default function PartnerLinkPage() {
                 type="text"
                 value={partnerCode}
                 onChange={(e) => setPartnerCode(e.target.value)}
-                placeholder="e.g., ABCD12"
+                placeholder="e.g., ABC123"
               />
               <button onClick={linkPartner} className="save-btn">
                 Link Partner
@@ -150,27 +149,28 @@ export default function PartnerLinkPage() {
             </div>
           </>
         ) : (
-          <div className="metric-block">
-            <h2 className="syncNum">
-              Partner: {partnerProfile?.username || 'Loading...'}
-            </h2>
-            {partnerProfile?.avatar_url && (
-              <img
-                src={partnerProfile.avatar_url}
-                alt="Partner Avatar"
-                className="avatar"
-              />
+          <>
+            {partnerProfile && (
+              <div className="pageMessage">
+                <h2>{partnerProfile.full_name}</h2>
+                {partnerProfile.avatar_url && (
+                  <img
+                    src={partnerProfile.avatar_url}
+                    alt="Partner Avatar"
+                    className="partner-avatar"
+                    height="80"
+                  />
+                )}
+              </div>
             )}
+
             <div className="metric-grid">
               {partnerMetrics.map((metric) => (
                 <div key={metric.id} className="metric-block">
                   <div className="metric-header">
                     <span className="metric-name">
                       {metric.icon && Icons[metric.icon] && (
-                        <FontAwesomeIcon
-                          icon={Icons[metric.icon]}
-                          className="metric-icon"
-                        />
+                        <FontAwesomeIcon icon={Icons[metric.icon]} className="metric-icon" />
                       )}
                       &nbsp;{metric.name}
                     </span>
@@ -181,10 +181,10 @@ export default function PartnerLinkPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </>
         )}
 
-        {linkStatus && !isLinked && <p className="syncNum">{linkStatus}</p>}
+        {linkStatus && !partnerLinked && <p className="syncNum">{linkStatus}</p>}
       </div>
     </div>
   );
