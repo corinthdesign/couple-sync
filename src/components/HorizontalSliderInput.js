@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 
-export default function HorizontalSliderInput({
+export function HorizontalSliderInput({
   value,
   onChange,
   min = 0,
