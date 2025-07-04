@@ -229,7 +229,7 @@ export default function Profile() {
                 className="w-full"
               />
               {photoUrl && (
-                <img src={photoUrl} alt="Current Photo" className="mt-2 h-24 w-24 rounded-full object-cover" />
+                <img src={photoUrl} alt="Current" className="mt-2 h-24 w-24 rounded-full object-cover" />
               )}
             </div>
 
