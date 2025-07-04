@@ -607,8 +607,8 @@ input:focus[type="range"]::-webkit-slider-thumb {
 
 .userPhoto {
   border-radius: 50%;
-  height: 200px;
-  width: 200px;
+  height: 175px;
+  width: 175px;
   object-fit: cover;
   margin-bottom: 0.5rem;
 }
@@ -663,4 +663,39 @@ input:focus[type="range"]::-webkit-slider-thumb {
  text-align: center;
  justify-content: center;
  padding-bottom: 2em;
+}
+
+.userSync {
+  position: relative;
+  display: block;
+  margin: 0 auto;
+  border-radius: 1000px;
+}
+
+.partnerSync {
+  position: relative;
+  display: block;
+  margin: 0 auto;
+  border-radius: 1000px;
+}
+
+.sync-wrapper {
+  position: relative;
+  width: 200px;
+  height: 150px;
+  margin: 0 auto;
+}
+
+.sync-gif {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 150px;
+  width: auto;
+  transform: translateX(-50%); /* start centered */
+  transition: transform 2s ease;
+  transition-delay: 1s;
+  pointer-events: none;
+  opacity: 0.6;
+  border-radius: 1000px;
 }

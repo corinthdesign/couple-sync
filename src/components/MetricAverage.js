@@ -19,8 +19,7 @@ export default function MetricAverage({ metrics }) {
     const average = total / weightSum;
     const rounded = Math.round(average);
 
-    
-  
+
     return (
       <div >
         <h2 className="averageNum">{rounded}%</h2>
