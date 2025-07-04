@@ -8,9 +8,9 @@ import MetricAverage from '../components/MetricAverage';
 const VerticalMeter = ({ percentage }) => {
   const capped = Math.max(0, Math.min(100, percentage));
   return (
-    <div className="vertical-meter">
+    <div className="vertical-meter-partner">
       <div
-        className="vertical-meter-fill"
+        className="vertical-meter-fill-partner"
         style={{
           height: `${capped}%`,
         }}

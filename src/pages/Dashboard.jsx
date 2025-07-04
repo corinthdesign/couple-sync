@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import MetricAverage from '../components/MetricAverage';
 import * as Icons from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { HorizontalSliderInput} from '../components/HorizontalSliderInput';
+import { VerticalSliderInput } from '../components/VerticalSliderInput';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -47,12 +47,12 @@ export default function Dashboard() {
   };
 
   const iconOptions = Object.entries(Icons)
-  .filter(([key, val]) => key.startsWith('fa') && val.iconName)
-  .map(([key, val]) => ({
-    name: key,         // e.g. 'faHeart'
-    label: val.iconName, // e.g. 'heart'
-    icon: val,
-  }));
+    .filter(([key, val]) => key.startsWith('fa') && val.iconName)
+    .map(([key, val]) => ({
+      name: key,
+      label: val.iconName,
+      icon: val,
+    }));
 
   const saveMetrics = async () => {
     setSaving(true);
@@ -138,7 +138,7 @@ export default function Dashboard() {
       .eq('id', id)
       .eq('user_id', user.id);
 
-      console.log('Deleted metric result:', data, error);
+    console.log('Deleted metric result:', data, error);
 
     if (error) {
       alert(`Error deleting metric: ${error.message}`);
@@ -311,49 +311,38 @@ export default function Dashboard() {
 
   return (
     <div className="page-content">
-     <h1 className="pageTitle">{ pageIcon }{ pageTitle }</h1>
+      <h1 className="pageTitle">{ pageIcon }{ pageTitle }</h1>
       <div className="dashboard">
-      <div className="average"><h2 className="averageMessage">Your love tank is at</h2><MetricAverage metrics={metrics} /></div>
+        <div className="average"><h2 className="averageMessage">Your love tank is at</h2><MetricAverage metrics={metrics} /></div>
         <div className="metric-grid">
           {metrics.map((metric) => (
-            <div
-  key={metric.id}
-  className="metric-block"
-  onClick={(e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const newValue = Math.round(
-      (clickX / rect.width) * (metric.scale_type === 'percentage' ? 100 : 10)
-    );
-    handleSliderChange(metric.id, newValue);
-  }}
->
-
-  <div className="metric-header">
-    <span className="metric-name">
-      {metric.icon && Icons[metric.icon] && (
-        <FontAwesomeIcon icon={Icons[metric.icon]} className="metric-icon" />
-      )}
-      &nbsp;{metric.name}
-    </span>
-    <button onClick={(e) => {
-      e.stopPropagation();
-      openEditModal(metric);
-    }} className="edit-btn">
-      <img height="15px" alt="" src="/icons/gear-solid.svg" />
-    </button>
-  </div>
-
-  <div className="metric-subblock">
-    <div className="metric-value">{metric.value}</div>
-  </div>
-  <HorizontalSliderInput
-  value={metric.value}
-  min={0}
-  max={metric.scale_type === 'percentage' ? 100 : 10}
-  onChange={(newVal) => handleSliderChange(metric.id, newVal)}
-/>
-</div>
+            <div key={metric.id} className="metric-block partner">
+              <div className="metric-subblock">
+                <div className="metric-header">
+                  <span className="metric-name">
+                    {metric.icon && Icons[metric.icon] && (
+                      <FontAwesomeIcon icon={Icons[metric.icon]} className="metric-icon" />
+                    )}
+                    &nbsp;{metric.name}
+                  </span>
+                  <button onClick={(e) => {
+                    e.stopPropagation();
+                    openEditModal(metric);
+                  }} className="edit-btn">
+                    <img height="15px" alt="" src="/icons/gear-solid.svg" />
+                  </button>
+                </div>
+                <div className="metric-value">{metric.value}{metric.scale_type === 'percentage' ? '%' : ''}</div>
+              </div>
+              <div className="metric-subblock">
+                <VerticalSliderInput
+                  value={metric.value}
+                  min={0}
+                  max={metric.scale_type === 'percentage' ? 100 : 10}
+                  onChange={(newVal) => handleSliderChange(metric.id, newVal)}
+                />
+              </div>
+            </div>
           ))}
         </div>
 
