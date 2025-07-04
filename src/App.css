@@ -613,6 +613,14 @@ input:focus[type="range"]::-webkit-slider-thumb {
   margin-bottom: 0.5rem;
 }
 
+.userPhotoPreview {
+  border-radius: 50%;
+  height: 75px;
+  width: 75px;
+  object-fit: cover;
+  margin-bottom: 0.5rem;
+}
+
 .small {
   height: 50px;
   width: 50px;

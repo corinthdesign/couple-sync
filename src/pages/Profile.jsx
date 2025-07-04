@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import timezones from '../utils/timezones'; // Assumes you have a timezone list
+import timezones from '../utils/timezones';
 
 const loveLanguageOptions = [
   'Words of Affirmation',
@@ -50,8 +50,7 @@ export default function Profile() {
         setRelationshipStartDate(data.relationship_start_date || '');
 
         if (data.photo_url) {
-          const { data: publicData } = supabase.storage.from('photos').getPublicUrl(data.photo_url);
-          setAvatarUrl(publicData?.publicUrl || null);
+          setAvatarUrl(data.photo_url); // This should be the full public URL
         }
 
         setEmail(user.email);
@@ -62,8 +61,6 @@ export default function Profile() {
 
     loadProfile();
   }, [user.id, user.email]);
-
-  console.log(user.id);
 
   const handleAvatarUpload = async () => {
     if (!photoFile || !user) return null;
@@ -140,7 +137,7 @@ export default function Profile() {
   return (
     <div className="page-content">
       <div className="p-4 max-w-md mx-auto">
-        <h1 className="pageTitle">{ pageIcon }{ pageTitle }</h1>
+        <h1 className="pageTitle">{pageIcon}{pageTitle}</h1>
         <div className="metric-block">
           <form onSubmit={handleSubmit} className="modal-form">
             <input
@@ -222,15 +219,17 @@ export default function Profile() {
 
             <div>
               <label className="block mb-1">Upload New Photo</label>
+              {photoUrl ? (
+                <img src={photoUrl} className="userPhotoPreview" alt="You" />
+              ) : (
+                <img src="/images/defaultUser.png" className="userPhotoPreview" alt="Default User" />
+              )}
               <input
                 type="file"
                 accept="image/*"
                 onChange={(e) => setAvatarFile(e.target.files[0])}
                 className="w-full"
               />
-              {photoUrl && (
-                <img src={photoUrl} alt="Current" className="mt-2 h-24 w-24 rounded-full object-cover" />
-              )}
             </div>
 
             <button

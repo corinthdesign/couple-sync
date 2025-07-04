@@ -27,6 +27,7 @@ export default function PartnerLinkPage() {
   const [partnerId, setPartnerId] = useState(null);
   const [partnerMetrics, setPartnerMetrics] = useState([]);
   const [partnerProfile, setPartnerProfile] = useState(null);
+  const [partnerPhotoUrl, setPartnerPhotoUrl] = useState(null);
   const pageTitle = "Your Partner";
   const pageIcon = <img alt="" height="15px" src="/icons/heart-solid.svg" />;
 
@@ -103,10 +104,13 @@ export default function PartnerLinkPage() {
     if (metricsError) console.error('Error fetching metrics:', metricsError);
     if (profileError) console.error('Error fetching profile:', profileError);
 
-    console.log('Fetched partner profile:', profile);
-
     setPartnerMetrics(metrics || []);
     setPartnerProfile(profile || null);
+
+    if (profile?.photo_url) {
+      const { data: publicData } = supabase.storage.from('photos').getPublicUrl(profile.photo_url);
+      setPartnerPhotoUrl(publicData?.publicUrl || null);
+    }
   }, [partnerId]);
 
   useEffect(() => {
@@ -149,7 +153,7 @@ export default function PartnerLinkPage() {
         ) : (
           <>
             <div className="pageMessage">
-              {partnerProfile?.photo_url && <img src={partnerProfile.photo_url} alt="Profile" className="userPhoto small" />}
+              {partnerPhotoUrl && <img src={partnerProfile?.photo_url || "/images/defaultUser.png"} alt="Profile" className="userPhoto small" />}
               <h2>{partnerProfile?.full_name}</h2>
             </div>
 

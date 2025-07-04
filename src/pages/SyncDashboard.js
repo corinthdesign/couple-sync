@@ -98,7 +98,7 @@ export default function SyncDashboard() {
       </div>
       <div className="couple-columns">
         <div className="person">
-          {userProfile?.photo_url && <img src={userProfile.photo_url} className="userPhoto" alt="You" />}
+          {userProfile?.photo_url && <img src={userProfile?.photo_url || "/images/defaultUser.png"} className="userPhoto" alt="You" />}
           <MetricAverage metrics={userMetrics} />
         </div>
         <div className="person">
