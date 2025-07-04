@@ -100,9 +100,12 @@ export default function Profile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-
+  
     const photoPath = await handleAvatarUpload();
-
+  
+    // If relationshipStartDate is empty string, set it to null
+    const relationshipDateValue = relationshipStartDate === '' ? null : relationshipStartDate;
+  
     const { error } = await supabase.from('profiles').upsert(
       {
         id: user.id,
@@ -111,21 +114,22 @@ export default function Profile() {
         top_love_language: topLoveLanguage,
         second_love_language: secondLoveLanguage,
         timezone,
-        relationship_start_date: relationshipStartDate,
+        relationship_start_date: relationshipDateValue,  // <-- fixed here
         photo_url: photoPath ?? undefined,
       },
       { onConflict: ['id'] }
     );
-
+  
     if (error) {
       alert('Error saving profile: ' + error.message);
     } else {
       alert('Profile updated successfully!');
       navigate('/');
     }
-
+  
     setSaving(false);
   };
+  
 
   if (loading) return <div className="p-4">Loading profile...</div>;
 
