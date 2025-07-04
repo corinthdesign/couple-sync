@@ -78,7 +78,7 @@ export default function Profile() {
 
     const path = `${user.id}/${photoFile.name}`;
 
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('photos')
       .upload(path, photoFile, {
         cacheControl: '3600',

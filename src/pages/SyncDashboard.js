@@ -26,19 +26,6 @@ export default function SyncDashboard() {
     setPartnerId(partnerId);
   }, [user.id]);
 
-  function DelayedGif({ src, delayMs, alt = '' }) {
-    const [gifSrc, setGifSrc] = useState(null);
-  
-    useEffect(() => {
-      const timeout = setTimeout(() => setGifSrc(src), delayMs);
-      return () => clearTimeout(timeout);
-    }, [src, delayMs]);
-  
-    return (
-      gifSrc ? <img height="150px" className="partnerSync" src={src} alt={alt} /> : null
-    );
-  }
-
   const fetchProfilesAndMetrics = useCallback(async () => {
     if (!user?.id || !partnerId) return;
 
