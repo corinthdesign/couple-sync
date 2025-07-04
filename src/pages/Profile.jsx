@@ -140,7 +140,7 @@ export default function Profile() {
 
   return (
     <div className="page-content">
-      <div className="p-4 max-w-md mx-auto">
+      <div>
         <h1 className="pageTitle">{pageIcon}{pageTitle}</h1>
         <div className="metric-block">
           <form onSubmit={handleSubmit} className="modal-form">
