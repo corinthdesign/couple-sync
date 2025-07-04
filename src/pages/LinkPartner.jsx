@@ -149,7 +149,7 @@ export default function PartnerLinkPage() {
         ) : (
           <>
             <div className="pageMessage">
-              {partnerProfile?.photo_url && <img src={partnerProfile.photo_url} alt="Avatar" className="userPhoto small" />}
+              {partnerProfile?.photo_url && <img src={partnerProfile.photo_url} alt="Profile Photo" className="userPhoto small" />}
               <h2>{partnerProfile?.full_name}</h2>
             </div>
 
