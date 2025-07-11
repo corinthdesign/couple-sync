@@ -161,7 +161,7 @@ export default function PartnerLinkPage() {
 
             <div className="metric-grid">
               {partnerMetrics.map((metric) => (
-                <div key={metric.id} className="metric-block partner">
+                <div key={metric.id} className="metric-block partner make-columns">
                   <div className="metric-subblock">
                     <div className="metric-header">
                       <span className="metric-name">

@@ -316,7 +316,7 @@ export default function Dashboard() {
         <div className="average"><h2 className="averageMessage">Your love tank is at</h2><MetricAverage metrics={metrics} /></div>
         <div className="metric-grid">
           {metrics.map((metric) => (
-            <div key={metric.id} className="metric-block partner">
+            <div key={metric.id} className="metric-block partner make-columns">
               <div className="metric-subblock">
                 <div className="metric-header">
                   <span className="metric-name">
