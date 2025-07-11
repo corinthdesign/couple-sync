@@ -1,32 +1,34 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 
 export function VerticalSliderInput({ value, min, max, onChange }) {
   const sliderRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  const getRelativeValue = (e) => {
+  const getRelativeValue = useCallback((e) => {
     const rect = sliderRef.current.getBoundingClientRect();
     const clientY = e.touches?.[0]?.clientY ?? e.clientY;
     const percent = (rect.bottom - clientY) / rect.height;
     const clampedPercent = Math.min(Math.max(percent, 0), 1);
     const newValue = min + clampedPercent * (max - min);
-    return Math.round(newValue * 10) / 10; // optional: round to 1 decimal
-  };
+    return Math.round(newValue * 10) / 10;
+  }, [min, max]);
 
-  const handlePointerDown = (e) => {
+  const handlePointerDown = useCallback((e) => {
     setIsDragging(true);
     const newValue = getRelativeValue(e);
     onChange(newValue);
-  };
+  }, [getRelativeValue, onChange]);
 
-  const handlePointerMove = (e) => {
+  const handlePointerMove = useCallback((e) => {
     if (!isDragging) return;
     e.preventDefault();
     const newValue = getRelativeValue(e);
     onChange(newValue);
-  };
+  }, [isDragging, getRelativeValue, onChange]);
 
-  const handlePointerUp = () => setIsDragging(false);
+  const handlePointerUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
 
   useEffect(() => {
     window.addEventListener('mousemove', handlePointerMove);
@@ -40,7 +42,7 @@ export function VerticalSliderInput({ value, min, max, onChange }) {
       window.removeEventListener('touchmove', handlePointerMove);
       window.removeEventListener('touchend', handlePointerUp);
     };
-  }, [isDragging]);
+  }, [handlePointerMove, handlePointerUp]);
 
   const percent = ((value - min) / (max - min)) * 100;
 
